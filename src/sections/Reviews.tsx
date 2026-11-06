@@ -131,7 +131,7 @@ export default function Reviews() {
               className="review-card w-[260px] shrink-0 bg-ivory p-8 shadow-sm will-change-transform md:w-[360px]"
             >
               <Stars count={r.rating} />
-              <p className="mt-5 text-sm font-light leading-relaxed text-umber/80">
+              <p className="mt-5 text-sm font-light leading-relaxed text-umber">
                 "{r.text}"
               </p>
               <div className="mt-6 border-t border-umber/10 pt-4">

@@ -34,14 +34,14 @@ export default function Shop() {
   }, [])
 
   return (
-    <section ref={root} className="pb-16 pt-36 md:pt-44">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
+    <section ref={root} className="pb-16 pt-28 md:pt-44">
+      <div className="mx-auto max-w-7xl px-4 md:px-10">
 
         {/* header */}
         <div className="shop-fade mb-12">
           <p className="mb-4 flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-bronze"> Our Products
           </p>
-          <h1 className="font-serif text-3xl font-light leading-[1.05] md:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-2xl font-light leading-[1.05] md:text-4xl lg:text-6xl">
             Trusted by Over 1 Lakh <em className="italic text-bronze">Doctors</em> Across India
           </h1>
         </div>

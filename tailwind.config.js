@@ -16,7 +16,7 @@ module.exports = {
         bronze: '#EF6077',       // Eyecojic Pink — primary brand color
         golddeep: '#D94F68',     // slightly deeper logo pink for hover
         umber: '#1E293B',        // Ink — dark text, dark backgrounds
-        smoke: '#334155',        // Slate — body text
+        smoke: '#1E293B',        // Slate — body text (darkened to match Ink)
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

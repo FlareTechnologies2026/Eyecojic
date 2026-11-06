@@ -89,7 +89,7 @@ export default function ProductPage() {
             {isEyecojicGel && (
               <div className="mt-5 grid grid-cols-2 gap-px bg-umber/10 text-center sm:grid-cols-5">
                 {TRUST_POINTS.map((point) => (
-                  <p key={point} className="bg-ivory px-2 py-4 text-[9px] uppercase leading-relaxed tracking-[0.15em] text-umber/70">
+                  <p key={point} className="bg-ivory px-2 py-4 text-[9px] uppercase leading-relaxed tracking-[0.15em] text-umber">
                     {point}
                   </p>
                 ))}
@@ -116,22 +116,22 @@ export default function ProductPage() {
               <div className="pd-fade mt-8 space-y-8">
                 <div>
                   <h2 className="font-serif text-3xl font-light">Why Eyecojic?</h2>
-                  <p className="mt-3 text-sm font-light leading-relaxed text-umber/80">
+                  <p className="mt-3 text-sm font-light leading-relaxed text-umber">
                     Kojic acid present in Eyecojic Under Eye Gel is a skin-brightening agent. It helps support a more even-looking appearance by helping suppress hyperpigmentation and restrain melanin formation through tyrosinase-inhibitory activity.
                   </p>
                 </div>
                 <div className="border-y border-umber/10 py-6">
                   <h2 className="text-[11px] uppercase tracking-[0.35em] text-bronze">Ingredients</h2>
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    <p className="text-sm leading-relaxed text-umber/80"><strong className="font-medium">2% Kojic Acid</strong><br />Helps lighten dark circles and brighten the under-eye area.</p>
-                    <p className="text-sm leading-relaxed text-umber/80"><strong className="font-medium">Vitamin E</strong><br />Provides antioxidant protection and nourishes the skin.</p>
+                    <p className="text-sm leading-relaxed text-umber"><strong className="font-medium">2% Kojic Acid</strong><br />Helps lighten dark circles and brighten the under-eye area.</p>
+                    <p className="text-sm leading-relaxed text-umber"><strong className="font-medium">Vitamin E</strong><br />Provides antioxidant protection and nourishes the skin.</p>
                   </div>
                 </div>
                 <div>
                   <h2 className="text-[11px] uppercase tracking-[0.35em] text-bronze">Key benefits</h2>
                   <ul className="mt-4 space-y-3">
                     {BENEFITS.map((benefit) => (
-                      <li key={benefit} className="flex items-start gap-3 text-sm font-light text-umber/80">
+                      <li key={benefit} className="flex items-start gap-3 text-sm font-light text-umber">
                         <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-bronze" />
                         {benefit}
                       </li>
@@ -141,10 +141,10 @@ export default function ProductPage() {
               </div>
             ) : (
               <>
-                <p className="pd-fade mt-8 max-w-lg text-sm font-light leading-relaxed tracking-wide text-umber/80">{product.description}</p>
+                <p className="pd-fade mt-8 max-w-lg text-sm font-light leading-relaxed tracking-wide text-umber">{product.description}</p>
                 <ul className="pd-fade mt-8 space-y-2 border-y border-umber/10 py-6">
                   {product.notes.map((note) => (
-                    <li key={note} className="flex items-center gap-3 text-xs font-light tracking-wide text-umber/75"> {note}
+                    <li key={note} className="flex items-center gap-3 text-xs font-light tracking-wide text-umber"> {note}
                     </li>
                   ))}
                 </ul>
@@ -176,7 +176,7 @@ export default function ProductPage() {
                   <input value={pincode} onChange={(event) => { setPincode(event.target.value.replace(/\D/g, '').slice(0, 6)); setPincodeMessage('') }} inputMode="numeric" placeholder="Enter pincode" aria-label="Pincode" className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-smoke/70" />
                   <button type="submit" className="px-4 text-[10px] uppercase tracking-[0.2em] text-bronze transition-colors hover:text-bronze">Check</button>
                 </form>
-                <button onClick={() => setWishlisted((current) => !current)} className={`border px-4 text-[10px] uppercase tracking-[0.2em] transition-colors ${wishlisted ? 'border-bronze bg-cream text-bronze' : 'border-umber/20 text-umber/70 hover:border-bronze hover:text-bronze'}`}>
+                <button onClick={() => setWishlisted((current) => !current)} className={`border px-4 text-[10px] uppercase tracking-[0.2em] transition-colors ${wishlisted ? 'border-bronze bg-cream text-bronze' : 'border-umber/20 text-umber hover:border-bronze hover:text-bronze'}`}>
                   {wishlisted ? 'Wishlisted' : 'Wishlist'}
                 </button>
               </div>
@@ -190,7 +190,7 @@ export default function ProductPage() {
                 ['Shipping & returns', 'Orders are packed carefully and dispatched across India. Unopened products may be returned according to our returns policy.'],
               ].map(([title, body]) => (
                 <details key={title} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] uppercase tracking-[0.3em] text-umber/80">
+                  <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] uppercase tracking-[0.3em] text-umber">
                     {title}
                     <span className="font-serif text-xl transition-transform duration-300 group-open:rotate-45">+</span>
                   </summary>

@@ -88,7 +88,7 @@ export default function Ingredients() {
           <p className="text-[11px] uppercase tracking-[0.4em] text-bronze">
             The formula, two acts
           </p>
-          <p className="font-serif text-2xl text-umber/60">
+          <p className="font-serif text-2xl text-umber">
             <span ref={numRef}>01</span>
             <span className="text-smoke"> / 02</span>
           </p>
@@ -112,7 +112,7 @@ export default function Ingredients() {
                 </p>
                 <ul className="mt-8 space-y-4">
                   {c.story.split('. ').filter(Boolean).slice(0, 2).map((line, j) => (
-                    <li key={j} className="flex items-start gap-3 text-base font-light leading-relaxed text-umber/80">
+                    <li key={j} className="flex items-start gap-3 text-base font-light leading-relaxed text-umber">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-bronze" />
                       {line.replace(/\.$/, '')}.
                     </li>

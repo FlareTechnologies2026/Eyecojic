@@ -63,7 +63,7 @@ export default function FAQ() {
             <p className="mb-4 text-[11px] uppercase tracking-[0.4em] text-bronze">
               Got questions?
             </p>
-            <h2 className="font-serif text-4xl font-light leading-snug md:text-5xl">
+            <h2 className="font-serif text-2xl font-light leading-snug md:text-5xl">
               Frequently asked <em className="italic text-bronze">questions.</em>
             </h2>
           </div>

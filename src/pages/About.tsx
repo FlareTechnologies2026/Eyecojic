@@ -55,15 +55,15 @@ export default function About() {
   }, [])
 
   return (
-    <section ref={root} className="overflow-hidden bg-ivory pb-20 pt-36 md:pt-44">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
+    <section ref={root} className="overflow-hidden bg-ivory pb-16 pt-28 md:pt-44">
+      <div className="mx-auto max-w-7xl px-4 md:px-10">
 
         {/* ── HERO ── */}
         <div className="about-reveal mb-20 grid items-center gap-10 grid-cols-1 md:grid-cols-2 md:gap-20">
           <div>
             <p className="mb-4 flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-bronze"> About Eyecojic
             </p>
-            <h1 className="font-serif text-4xl font-light leading-[1.05] text-umber md:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-3xl font-light leading-[1.05] text-umber md:text-5xl lg:text-6xl">
               Care that <em className="italic text-bronze">wakes</em> you up.
             </h1>
             <p className="mt-6 max-w-md text-sm font-light leading-relaxed text-smoke">

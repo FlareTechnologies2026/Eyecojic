@@ -144,7 +144,7 @@ export default function Maison() {
                   {s.n}
                 </p>
                 <h2 className="font-serif text-2xl">{s.title}</h2>
-                <p className="col-span-2 max-w-2xl text-sm font-light leading-relaxed text-umber/75 md:col-span-1">
+                <p className="col-span-2 max-w-2xl text-sm font-light leading-relaxed text-umber md:col-span-1">
                   {s.body}
                 </p>
               </div>
@@ -157,7 +157,7 @@ export default function Maison() {
           {VALUES.map((v) => (
             <div key={v.title} className="value-card bg-ivory p-10 md:p-12">
               <p className="font-serif text-xl italic text-bronze">{v.title}</p>
-              <p className="mt-4 text-sm font-light leading-relaxed text-umber/75">
+              <p className="mt-4 text-sm font-light leading-relaxed text-umber">
                 {v.body}
               </p>
             </div>
@@ -166,7 +166,7 @@ export default function Maison() {
 
         {/* cta */}
         <div className="mt-32 text-center">
-          <p className="font-serif text-3xl font-light italic text-umber/80 md:text-4xl">
+          <p className="font-serif text-3xl font-light italic text-umber md:text-4xl">
             “We make less, so it can be more.”
           </p>
           <Link

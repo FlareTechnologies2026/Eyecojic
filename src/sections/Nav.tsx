@@ -150,13 +150,13 @@ export default function Nav() {
             <div className="mb-6 flex gap-8 border-b border-umber/10">
               <button
                 onClick={() => setTab('login')}
-                className={`pb-3 text-sm font-semibold transition-colors ${tab === 'login' ? 'border-b-2 border-bronze text-bronze' : 'text-umber/50'}`}
+                className={`pb-3 text-sm font-semibold transition-colors ${tab === 'login' ? 'border-b-2 border-bronze text-bronze' : 'text-umber'}`}
               >
                 Login
               </button>
               <button
                 onClick={() => setTab('register')}
-                className={`pb-3 text-sm font-semibold transition-colors ${tab === 'register' ? 'border-b-2 border-bronze text-bronze' : 'text-umber/50'}`}
+                className={`pb-3 text-sm font-semibold transition-colors ${tab === 'register' ? 'border-b-2 border-bronze text-bronze' : 'text-umber'}`}
               >
                 Register
               </button>
@@ -184,7 +184,7 @@ export default function Nav() {
                   </div>
                   <div className="flex items-center gap-2">
                     <input type="checkbox" id="remember" className="accent-bronze" />
-                    <label htmlFor="remember" className="text-sm text-umber/70">Remember me</label>
+                    <label htmlFor="remember" className="text-sm text-umber">Remember me</label>
                   </div>
                   <button type="submit" className="bg-bronze px-6 py-2.5 text-[11px] uppercase tracking-[0.25em] text-ivory hover:bg-bronze">
                     Log in

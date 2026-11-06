@@ -65,7 +65,7 @@ export default function Ritual() {
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-              <p className="font-serif text-5xl font-light text-umber/40 transition-colors duration-700 group-hover:text-bronze">
+              <p className="font-serif text-5xl font-light text-umber/60 transition-colors duration-700 group-hover:text-bronze">
                 {s.n}
               </p>
               <h3 className="mt-8 font-serif text-2xl">{s.title}</h3>

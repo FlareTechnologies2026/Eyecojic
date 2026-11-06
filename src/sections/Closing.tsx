@@ -36,7 +36,7 @@ export default function Closing() {
             <h2 className="close-line font-serif text-4xl font-light leading-[1.05] md:text-5xl">
               Reserve your <em className="italic text-sand">first light.</em>
             </h2>
-            <p className="close-fade mt-4 max-w-sm text-xs font-light leading-relaxed text-ivory/60">
+            <p className="close-fade mt-4 max-w-sm text-xs font-light leading-relaxed text-ivory/90">
               Be the first to hear about Eyecojic care, product news, and simple ways to make your daily eye ritual feel more refreshed.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function Closing() {
           {/* right � newsletter form */}
           <div className="close-fade">
             <p className="mb-2 font-sans text-lg font-semibold text-ivory">Newsletter</p>
-            <p className="mb-5 text-sm font-light text-ivory/60">
+            <p className="mb-5 text-sm font-light text-ivory/90">
               Sign up to receive exclusive offers and updates.
             </p>
             {sent ? (

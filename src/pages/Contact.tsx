@@ -42,14 +42,14 @@ export default function Contact() {
   }
 
   return (
-    <section ref={root} className="overflow-hidden pb-16 pt-36 md:pt-44 bg-ivory">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
+    <section ref={root} className="overflow-hidden pb-16 pt-28 md:pt-44 bg-ivory">
+      <div className="mx-auto max-w-7xl px-4 md:px-10">
 
         {/* Hero */}
         <div className="mb-16">
           <p className="contact-reveal mb-6 flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-bronze"> Contact Us
           </p>
-          <h1 className="contact-reveal font-serif text-4xl font-light leading-[1.05] md:text-7xl text-umber">
+          <h1 className="contact-reveal font-serif text-3xl font-light leading-[1.05] md:text-5xl lg:text-7xl text-umber">
             We'd love to <em className="italic text-bronze">hear</em> from you.
           </h1>
         </div>
@@ -61,11 +61,11 @@ export default function Contact() {
             {/* left — info panel */}
             <div className="flex flex-col justify-between bg-bronze p-10 text-ivory md:p-14">
               <div>
-                <p className="mb-2 text-[10px] uppercase tracking-[0.4em] text-ivory/60">Get in touch</p>
+                <p className="mb-2 text-[10px] uppercase tracking-[0.4em] text-ivory/90">Get in touch</p>
                 <h2 className="font-serif text-3xl font-light leading-snug md:text-4xl">
                   Let's talk about <em className="italic text-sand">your eyes.</em>
                 </h2>
-                <p className="mt-4 text-sm font-light leading-relaxed text-ivory/70">
+                <p className="mt-4 text-sm font-light leading-relaxed text-ivory">
                   Reach out for inquiries, support, or collaborations. Our team is here to help.
                 </p>
               </div>
@@ -77,7 +77,7 @@ export default function Contact() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-ivory/50">Email</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-ivory/80">Email</p>
                     <p className="text-sm text-ivory">info@eyecojic.com</p>
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export default function Contact() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-ivory/50">Phone</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-ivory/80">Phone</p>
                     <p className="text-sm text-ivory">+91-7840061316</p>
                   </div>
                 </div>
@@ -110,7 +110,7 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="name" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber/60">Your name *</label>
+                      <label htmlFor="name" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Your name *</label>
                       <input
                         id="name" name="name" required
                         className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
@@ -118,7 +118,7 @@ export default function Contact() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber/60">Email address *</label>
+                      <label htmlFor="email" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Email address *</label>
                       <input
                         id="email" name="email" type="email" required
                         className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
@@ -127,7 +127,7 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="subject" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber/60">Subject *</label>
+                    <label htmlFor="subject" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Subject *</label>
                     <input
                       id="subject" name="subject" required
                       className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
@@ -135,7 +135,7 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber/60">Message</label>
+                    <label htmlFor="message" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Message</label>
                     <textarea
                       id="message" name="message" rows={4}
                       className="w-full resize-none rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"

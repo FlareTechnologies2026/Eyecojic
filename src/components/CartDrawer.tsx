@@ -37,12 +37,12 @@ export default function CartDrawer() {
         }`}
       >
         <div className="flex items-center justify-between border-b border-umber/10 px-8 py-6">
-          <p className="text-[11px] uppercase tracking-[0.35em] text-umber/70">
+          <p className="text-[11px] uppercase tracking-[0.35em] text-umber">
             Your bag {count > 0 && `· ${count}`}
           </p>
           <button
             onClick={closeCart}
-            className="font-serif text-2xl leading-none text-umber/60 transition-colors hover:text-umber"
+            className="font-serif text-2xl leading-none text-umber transition-colors hover:text-umber"
             aria-label="Close bag"
           >
             ×
@@ -52,7 +52,7 @@ export default function CartDrawer() {
         <div className="flex-1 overflow-y-auto px-8 py-6">
           {lines.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <p className="font-serif text-2xl italic text-umber/60">
+              <p className="font-serif text-2xl italic text-umber">
                 Your bag is empty.
               </p>
               <p className="mt-3 max-w-[16rem] text-xs font-light leading-relaxed text-smoke">
@@ -124,7 +124,7 @@ export default function CartDrawer() {
         {lines.length > 0 && (
           <div className="border-t border-umber/10 px-8 py-6">
             <div className="mb-1 flex items-center justify-between">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-umber/70">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-umber">
                 Subtotal
               </p>
               <p className="font-serif text-2xl">{formatPrice(subtotal)}</p>

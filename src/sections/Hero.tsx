@@ -50,14 +50,14 @@ export default function Hero() {
       <div className="relative z-10 flex min-h-[70vh] flex-col items-center justify-center px-4 pt-20 pb-12 text-center md:min-h-screen md:px-14">
 
         {/* eyebrow tag */}
-        <p className="hero-fade mb-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-ivory/70">
+        <p className="hero-fade mb-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-ivory">
           <span className="h-px w-10 bg-ivory/40" />
           Under-Eye Care
           <span className="h-px w-10 bg-ivory/40" />
         </p>
 
         {/* heading */}
-        <h1 className="font-serif text-3xl font-light leading-[1.05] text-ivory md:text-6xl lg:text-7xl">
+        <h1 className="font-serif text-2xl font-light leading-[1.05] text-ivory md:text-5xl lg:text-7xl">
           <span className="block overflow-hidden">
             <span className="hero-line-inner block">Every glance deserves <em className="italic text-sand">a little care.</em></span>
           </span>
