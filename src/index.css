@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 33% 94%;
+    --foreground: 215 28% 17%;
+    --card: 36 33% 94%;
+    --card-foreground: 215 28% 17%;
+    --popover: 36 33% 94%;
+    --popover-foreground: 215 28% 17%;
+    --primary: 351 82% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 351 100% 95%;
+    --secondary-foreground: 215 28% 17%;
+    --muted: 351 100% 95%;
+    --muted-foreground: 215 19% 35%;
+    --accent: 351 82% 66%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 351 40% 88%;
+    --input: 351 40% 88%;
+    --ring: 351 82% 66%;
+    --radius: 0.25rem;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    @apply bg-ivory text-umber font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: #C40F4A;
+    color: #ffffff;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-shift 9s steps(6) infinite;
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+  }
+}
+
+@keyframes grain-shift {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -4%); }
+  60% { transform: translate(-2%, -3%); }
+  80% { transform: translate(4%, 2%); }
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee-x 36s linear infinite;
+}
