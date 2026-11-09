@@ -53,13 +53,13 @@ export default function TrustBanner() {
             </p>
           </div>
 
-          {/* right: trusted by image — slightly tilted */}
+          {/* right: trusted by image */}
           <div className="flex justify-center md:justify-end">
             <img
               src="/images/trusted by.png"
               alt="Trusted by doctors"
               className="h-auto w-full max-w-xs object-contain md:max-w-sm"
-              style={{ transform: 'rotate(-4deg)', transformOrigin: 'center' }}
+              style={{ transformOrigin: 'center' }}
             />
           </div>
 
