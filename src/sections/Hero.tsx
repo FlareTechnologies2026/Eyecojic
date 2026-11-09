@@ -40,6 +40,8 @@ export default function Hero() {
         loop
         muted
         playsInline
+        preload="auto"
+        poster="/images/hero.png"
         className="absolute inset-0 h-full w-full object-cover object-top"
       />
 
