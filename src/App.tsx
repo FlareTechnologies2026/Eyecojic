@@ -13,6 +13,7 @@ import Nav from './sections/Nav'
 import Footer from './sections/Footer'
 import Closing from './sections/Closing'
 import CartDrawer from './components/CartDrawer'
+import ChatWidget from './components/ChatWidget'
 import { CartProvider } from './context/CartContext'
 import { useSmoothScroll, ScrollTrigger } from './hooks/useSmoothScroll'
 
@@ -61,6 +62,7 @@ export default function App() {
         <Closing />
         <Footer />
         <CartDrawer />
+        <ChatWidget />
       </div>
     </CartProvider>
   )
