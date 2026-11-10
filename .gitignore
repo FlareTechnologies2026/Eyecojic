@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# chat server
+server/node_modules
+server/.env
+server/data/
