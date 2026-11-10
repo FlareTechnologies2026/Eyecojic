@@ -5,7 +5,7 @@ const STEPS = [
   {
     n: 'I',
     title: 'Apply',
-    body: 'Dot a pea-sized amount onto your ring finger for the gentlest touch.',
+    body: 'Dot a pea-sized amount onto your index finger for the gentlest touch.',
     img: '/images/1.png',
   },
   {
