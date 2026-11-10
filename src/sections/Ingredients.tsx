@@ -81,7 +81,7 @@ export default function Ingredients() {
   }, [])
 
   return (
-    <section id="ingredients" ref={root} className="relative h-[320vh] md:h-[280vh]">
+    <section id="ingredients" ref={root} className="relative h-[220vh] md:h-[200vh]">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden bg-[#fdf6f0]">
         {/* header row */}
         <div className="mx-auto flex w-full max-w-7xl items-end justify-between px-6 pt-20 md:px-10 md:pt-28">

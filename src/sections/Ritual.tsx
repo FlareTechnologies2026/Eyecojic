@@ -12,7 +12,7 @@ const STEPS = [
     n: 'II',
     title: 'Tap',
     body: 'Gently tap the cream around your under-eye area from the inner to outer corner.',
-    img: '/images/2.png',
+    img: '/images/step-two.png',
   },
   {
     n: 'III',
