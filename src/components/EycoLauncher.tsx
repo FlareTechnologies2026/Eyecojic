@@ -1,22 +1,22 @@
 import type { MouseEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { gsap } from '../hooks/useSmoothScroll'
-import Orb from './minerva/Orb'
+import Orb from './eyco/Orb'
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// Floating orb on the main site. A real link to /minerva, below the nav menu and cart (z-60/70).
-export default function MinervaLauncher() {
+// Floating orb on the main site. A real link to /eyco, below the nav menu and cart (z-60/70).
+export default function EycoLauncher() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  if (pathname === '/minerva') return null
+  if (pathname === '/eyco') return null
 
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     // Let the browser handle new-tab clicks and reduced-motion users.
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0 || reducedMotion()) return
     e.preventDefault()
-    const orb = e.currentTarget.querySelector('.minerva-orb-box')
-    if (!orb) return navigate('/minerva')
+    const orb = e.currentTarget.querySelector('.eyco-orb-box')
+    if (!orb) return navigate('/eyco')
     const r = orb.getBoundingClientRect()
     const cx = r.left + r.width / 2
     const cy = r.top + r.height / 2
@@ -44,7 +44,7 @@ export default function MinervaLauncher() {
     const finish = () => {
       if (done) return
       done = true
-      navigate('/minerva')
+      navigate('/eyco')
       gsap.to(veil, { autoAlpha: 0, duration: 0.3, delay: 0.1, onComplete: () => veil.remove() })
       window.setTimeout(() => veil.remove(), 1500)
     }
@@ -54,16 +54,16 @@ export default function MinervaLauncher() {
 
   return (
     <Link
-      to="/minerva"
+      to="/eyco"
       onClick={onClick}
-      aria-label="Chat with Minerva"
+      aria-label="Chat with Eyco"
       className="fixed bottom-4 right-4 z-[55] flex items-center gap-3 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-umber focus-visible:ring-offset-2 md:bottom-6 md:right-6"
     >
       <span className="hidden rounded-full border border-umber/10 bg-ivory/95 px-4 py-2 text-left shadow-md backdrop-blur-sm sm:block">
-        <span className="block text-sm font-medium leading-tight text-umber">Ask Minerva</span>
+        <span className="block text-sm font-medium leading-tight text-umber">Ask Eyco</span>
         <span className="block text-[11px] leading-tight text-umber/75">Usage, ingredients &amp; delivery</span>
       </span>
-      <span className="minerva-orb-box block h-14 w-14 md:h-16 md:w-16">
+      <span className="eyco-orb-box block h-14 w-14 md:h-16 md:w-16">
         <Orb />
       </span>
     </Link>

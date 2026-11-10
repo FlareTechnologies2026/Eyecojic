@@ -1,10 +1,10 @@
-# Minerva chat server
+# Eyco chat server
 
-Small Node backend (>= 20.12) for Minerva, the virtual assistant on the Eyecojic website (`/minerva`). The only dependency is `nodemailer`.
+Small Node backend (>= 20.12) for Eyco, the virtual assistant on the Eyecojic website (`/eyco`). The only dependency is `nodemailer`.
 
 ## How it works
 
-1. The Minerva page (`src/pages/Minerva.tsx`, state in `src/context/MinervaProvider.tsx`) POSTs the conversation to `/api/chat`.
+1. The Eyco page (`src/pages/Eyco.tsx`, state in `src/context/EycoProvider.tsx`) POSTs the conversation to `/api/chat`.
 2. `src/bm25.mjs` retrieves the top 4 chunks from `kb/*.md` (one chunk per `##` section).
    The pinned chunk (`type: pinned`, safety) and the known-gaps chunk (`type: gaps`) are always added.
 3. `src/prompt.mjs` builds the system prompt: answer only from context, no cure/treat/guarantee wording,

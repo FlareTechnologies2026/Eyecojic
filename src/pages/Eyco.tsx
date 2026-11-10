@@ -1,20 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent, RefObject } from 'react'
 import { Link, useNavigate } from 'react-router'
-import Orb from '../components/minerva/Orb'
-import { useMinerva } from '../hooks/useMinerva'
+import Orb from '../components/eyco/Orb'
+import { useEyco } from '../hooks/useEyco'
 import { sendEscalation } from '../lib/chatApi'
 import { linkify } from '../lib/linkify'
 
 const CHIPS = ['How do I use it?', "What's in it?", 'Is it safe for sensitive skin?', 'Delivery & returns', 'Where to buy']
 const DISCLAIMER =
-  'Minerva is a virtual assistant, not a doctor. If your skin reacts, stop using the product and see a doctor.'
+  'Eyco is a virtual assistant, not a doctor. If your skin reacts, stop using the product and see a doctor.'
 
 const pill =
   'rounded-full border border-umber/15 bg-white/70 px-4 py-2 text-sm text-umber backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-umber'
 
-export default function Minerva() {
-  const m = useMinerva()
+export default function Eyco() {
+  const m = useEyco()
   const navigate = useNavigate()
   const [draft, setDraft] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
@@ -27,7 +27,7 @@ export default function Minerva() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Minerva | Eyecojic'
+    document.title = 'Eyco | Eyecojic'
     return () => {
       document.title = prev
     }
@@ -150,7 +150,7 @@ export default function Minerva() {
           className={`absolute inset-0 flex flex-col items-center justify-center overflow-y-auto px-4 py-6 text-center transition-opacity duration-500 ${m.started ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
         >
           <div ref={slotRef} className="h-[130px] w-[130px] shrink-0 sm:h-[180px] sm:w-[180px]" />
-          <p className="mt-6 text-[11px] uppercase tracking-[0.35em] text-umber/75">Meet Minerva</p>
+          <p className="mt-6 text-[11px] uppercase tracking-[0.35em] text-umber/75">Meet Eyco</p>
           <h1 className="mt-3 font-serif text-4xl font-light leading-tight sm:text-5xl md:text-6xl">
             Your Eyecojic <em className="italic text-golddeep">guide.</em>
           </h1>
@@ -173,7 +173,7 @@ export default function Minerva() {
           ref={listRef}
           role="log"
           aria-live="polite"
-          aria-label="Conversation with Minerva"
+          aria-label="Conversation with Eyco"
           data-lenis-prevent
           className={`absolute inset-0 overflow-y-auto overscroll-contain px-4 pb-4 pt-[136px] transition-opacity duration-500 [mask-image:linear-gradient(to_bottom,transparent_0,black_6rem)] sm:pt-[88px] sm:[mask-image:linear-gradient(to_bottom,transparent_0,black_4.5rem)] md:px-8 ${m.started ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
         >
@@ -193,7 +193,7 @@ export default function Minerva() {
                     ) : (
                       typing &&
                       i === m.messages.length - 1 && (
-                        <span className="inline-flex gap-1 py-2" aria-label="Minerva is typing">
+                        <span className="inline-flex gap-1 py-2" aria-label="Eyco is typing">
                           <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50" />
                           <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50 [animation-delay:150ms]" />
                           <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50 [animation-delay:300ms]" />
@@ -272,7 +272,7 @@ function Composer({
         rows={1}
         maxLength={500}
         placeholder="Ask a question…"
-        aria-label="Ask Minerva a question"
+        aria-label="Ask Eyco a question"
         className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent py-2.5 text-base text-umber outline-none placeholder:text-umber/65"
       />
       <button
@@ -290,7 +290,7 @@ function Composer({
 }
 
 function HandoffDialog() {
-  const { messages, handoff, closeForm } = useMinerva()
+  const { messages, handoff, closeForm } = useEyco()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState(handoff?.reason ?? '')
@@ -337,12 +337,12 @@ function HandoffDialog() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="minerva-form-title"
+        aria-labelledby="eyco-form-title"
         data-lenis-prevent
         className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ivory p-6 shadow-2xl sm:rounded-3xl"
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 id="minerva-form-title" className="font-serif text-3xl font-light">
+          <h2 id="eyco-form-title" className="font-serif text-3xl font-light">
             Contact our team
           </h2>
           <button onClick={closeForm} aria-label="Close form" className="font-serif text-3xl leading-none text-umber/80 hover:text-umber">

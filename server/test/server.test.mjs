@@ -91,8 +91,8 @@ test('escalation requires consent', () => {
   assert.ok(r.errors.consent)
 })
 
-test('system prompt names Minerva', () => {
-  assert.match(buildSystem(chunks.slice(0, 1)), /You are Minerva/)
+test('system prompt names Eyco', () => {
+  assert.match(buildSystem(chunks.slice(0, 1)), /You are Eyco/)
 })
 
 test('offline: answers from kb, hands off on reaction, declines comparisons, admits gaps', () => {
@@ -106,7 +106,7 @@ test('offline: answers from kb, hands off on reaction, declines comparisons, adm
   assert.match(p('is it better than Garnier?').text, /not able to compare/i)
   assert.equal(p('what is the shelf life of the moon rock').handoff?.category, 'unanswered')
   assert.equal(p('I want to talk to a human').handoff?.category, 'requested_human')
-  assert.match(p('hello').text, /Minerva/)
+  assert.match(p('hello').text, /Eyco/)
 })
 
 test('offline: never uses forbidden claim words', () => {

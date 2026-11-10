@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { streamChat } from '../lib/chatApi'
-import { MinervaContext } from './minervaContext'
-import type { MinervaHandoff, MinervaMessage } from './minervaContext'
+import { EycoContext } from './eycoContext'
+import type { EycoHandoff, EycoMessage } from './eycoContext'
 
-// Lives above the routes, so the conversation survives site -> /minerva -> back.
-export function MinervaProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<MinervaMessage[]>([])
+// Lives above the routes, so the conversation survives site -> /eyco -> back.
+export function EycoProvider({ children }: { children: ReactNode }) {
+  const [messages, setMessages] = useState<EycoMessage[]>([])
   const [busy, setBusy] = useState(false)
-  const [handoff, setHandoff] = useState<MinervaHandoff | null>(null)
+  const [handoff, setHandoff] = useState<EycoHandoff | null>(null)
   const [formOpen, setFormOpen] = useState(false)
 
-  const messagesRef = useRef<MinervaMessage[]>([])
+  const messagesRef = useRef<EycoMessage[]>([])
   const busyRef = useRef(false)
   const nextId = useRef(1)
   const abortRef = useRef<AbortController | null>(null)
@@ -28,14 +28,14 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
     busyRef.current = true
     setBusy(true)
 
-    const userMsg: MinervaMessage = { id: nextId.current++, role: 'user', content: q }
-    const botMsg: MinervaMessage = { id: nextId.current++, role: 'assistant', content: '' }
+    const userMsg: EycoMessage = { id: nextId.current++, role: 'user', content: q }
+    const botMsg: EycoMessage = { id: nextId.current++, role: 'assistant', content: '' }
     const history = [...messagesRef.current, userMsg]
     setMessages([...history, botMsg])
 
     const ac = new AbortController()
     abortRef.current = ac
-    const patch = (fn: (m: MinervaMessage) => MinervaMessage) =>
+    const patch = (fn: (m: EycoMessage) => EycoMessage) =>
       setMessages((prev) => prev.map((m) => (m.id === botMsg.id ? fn(m) : m)))
 
     void (async () => {
@@ -83,5 +83,5 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
     [messages, busy, handoff, formOpen, send, reset],
   )
 
-  return <MinervaContext.Provider value={value}>{children}</MinervaContext.Provider>
+  return <EycoContext.Provider value={value}>{children}</EycoContext.Provider>
 }

@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-export type MinervaMessage = {
+export type EycoMessage = {
   id: number
   role: 'user' | 'assistant'
   content: string
@@ -8,13 +8,13 @@ export type MinervaMessage = {
   handoff?: boolean
 }
 
-export type MinervaHandoff = { category: string; reason: string }
+export type EycoHandoff = { category: string; reason: string }
 
-export type MinervaState = {
-  messages: MinervaMessage[]
+export type EycoState = {
+  messages: EycoMessage[]
   busy: boolean
   started: boolean
-  handoff: MinervaHandoff | null
+  handoff: EycoHandoff | null
   formOpen: boolean
   send: (text: string) => void
   reset: () => void
@@ -22,4 +22,4 @@ export type MinervaState = {
   closeForm: () => void
 }
 
-export const MinervaContext = createContext<MinervaState | null>(null)
+export const EycoContext = createContext<EycoState | null>(null)

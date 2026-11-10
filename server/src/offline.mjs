@@ -19,7 +19,7 @@ function* pieces(text) {
 export function planOffline(query, retriever) {
   const q = String(query)
   if (GREETING.test(q))
-    return { text: "Hi, I'm Minerva, the virtual assistant for Eyecojic. Ask me about ingredients, how to use the gel, delivery or returns." }
+    return { text: "Hi, I'm Eyco, the virtual assistant for Eyecojic. Ask me about ingredients, how to use the gel, delivery or returns." }
   if (THANKS.test(q)) return { text: "You're welcome! Ask me anything else about Eyecojic whenever you like." }
 
   if (REACTION.test(q) && /\b(eye|eyes|skin|face|under|used|using|applied|after)\b/i.test(q))

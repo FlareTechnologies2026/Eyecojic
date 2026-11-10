@@ -1,4 +1,4 @@
-// Minerva live smoke run against the real Claude API (needs ANTHROPIC_API_KEY in server/.env).
+// Eyco live smoke run against the real Claude API (needs ANTHROPIC_API_KEY in server/.env).
 // Prints every answer and flags risky ones for manual review.
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
