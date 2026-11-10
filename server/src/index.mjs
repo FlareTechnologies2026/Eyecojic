@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { Bm25Retriever, loadKb, buildContext } from './bm25.mjs'
 import { HANDOFF_TOOL, buildSystem } from './prompt.mjs'
 import { streamChat } from './anthropic.mjs'
+import { offlineChat } from './offline.mjs'
 import { emailConfigured, sendEscalation, validateEscalation } from './escalate.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -93,7 +94,6 @@ function cleanMessages(raw) {
 async function chat(req, res) {
   const ip = clientIp(req)
   if (rateLimited(ip, 'chat', 20, 60_000)) return json(res, 429, { error: 'Too many messages. Please wait a minute.' })
-  if (!env.ANTHROPIC_API_KEY) return json(res, 503, { error: 'Chat is not configured.' })
 
   let body
   try {
@@ -118,19 +118,37 @@ async function chat(req, res) {
   const ac = new AbortController()
   res.on('close', () => ac.abort())
 
+  const emit = (ev) => {
+    if (ev.type === 'text') send({ type: 'text', text: ev.text })
+    else if (ev.type === 'tool' && ev.name === HANDOFF_TOOL.name)
+      send({ type: 'handoff', reason: String(ev.input.reason ?? ''), category: String(ev.input.category ?? 'other') })
+  }
+
   try {
-    for await (const ev of streamChat({
-      apiKey: env.ANTHROPIC_API_KEY,
-      model: MODEL,
-      system: buildSystem(ctx.chunks),
-      messages,
-      tools: [HANDOFF_TOOL],
-      signal: ac.signal,
-    })) {
-      if (ev.type === 'text') send({ type: 'text', text: ev.text })
-      else if (ev.type === 'tool' && ev.name === HANDOFF_TOOL.name)
-        send({ type: 'handoff', reason: String(ev.input.reason ?? ''), category: String(ev.input.category ?? 'other') })
+    let started = false
+    let failed = !env.ANTHROPIC_API_KEY // no key: go straight to offline mode
+    if (!failed) {
+      try {
+        for await (const ev of streamChat({
+          apiKey: env.ANTHROPIC_API_KEY,
+          model: MODEL,
+          system: buildSystem(ctx.chunks),
+          messages,
+          tools: [HANDOFF_TOOL],
+          signal: ac.signal,
+        })) {
+          started = true
+          emit(ev)
+        }
+      } catch (e) {
+        if (ac.signal.aborted) return res.end()
+        console.error('claude error:', e.message)
+        // Fall back to the offline engine only if nothing was sent yet, so the reply never doubles up.
+        if (started) throw e
+        failed = true
+      }
     }
+    if (failed) for await (const ev of offlineChat({ messages, retriever })) emit(ev)
     send({ type: 'done' })
   } catch (e) {
     if (!ac.signal.aborted) {
@@ -150,6 +168,8 @@ async function escalate(req, res) {
   } catch (e) {
     return json(res, e.status || 400, { error: 'Invalid request.' })
   }
+  // Honeypot: a hidden field real users never fill. Pretend success so bots learn nothing.
+  if (typeof body?.website === 'string' && body.website.trim()) return json(res, 200, { ok: true })
   const v = validateEscalation(body)
   if (!v.ok) return json(res, 422, { errors: v.errors })
   try {
@@ -176,6 +196,7 @@ const server = createServer(async (req, res) => {
       return json(res, 200, {
         ok: true,
         chunks: chunks.length,
+        mode: env.ANTHROPIC_API_KEY ? 'live' : 'offline',
         anthropicConfigured: Boolean(env.ANTHROPIC_API_KEY),
         emailConfigured: emailConfigured(env),
       })

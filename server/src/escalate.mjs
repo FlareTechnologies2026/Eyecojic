@@ -28,6 +28,7 @@ export function validateEscalation(body) {
   if (!name) errors.name = 'Please enter your name.'
   if (!EMAIL_RE.test(email)) errors.email = 'Please enter a valid email address.'
   if (message.length < 5) errors.message = 'Please tell us a little more.'
+  if (body?.consent !== true) errors.consent = 'Please agree so we can contact you.'
   return Object.keys(errors).length
     ? { ok: false, errors }
     : { ok: true, value: { name, email, phone, message, category, transcript } }

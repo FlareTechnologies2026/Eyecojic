@@ -61,9 +61,11 @@ export async function* streamChat(
 export type EscalationInput = {
   name: string
   email: string
-  phone: string
   message: string
   category: string
+  consent: boolean
+  /** Honeypot: must stay empty. Real users never see this field. */
+  website: string
   transcript: ChatMessage[]
 }
 

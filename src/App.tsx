@@ -13,7 +13,9 @@ import Nav from './sections/Nav'
 import Footer from './sections/Footer'
 import Closing from './sections/Closing'
 import CartDrawer from './components/CartDrawer'
-import ChatWidget from './components/ChatWidget'
+import MinervaLauncher from './components/MinervaLauncher'
+import Minerva from './pages/Minerva'
+import { MinervaProvider } from './context/MinervaProvider'
 import { CartProvider } from './context/CartContext'
 import { useSmoothScroll, ScrollTrigger } from './hooks/useSmoothScroll'
 
@@ -39,8 +41,19 @@ export default function App() {
     return () => clearTimeout(t)
   }, [location.pathname])
 
+  // /minerva is its own full-screen page: no nav, footer, cart or launcher.
+  if (location.pathname === '/minerva')
+    return (
+      <CartProvider>
+        <MinervaProvider>
+          <Minerva />
+        </MinervaProvider>
+      </CartProvider>
+    )
+
   return (
     <CartProvider>
+      <MinervaProvider>
       <div className="grain relative">
         <Nav />
         <main>
@@ -62,8 +75,9 @@ export default function App() {
         <Closing />
         <Footer />
         <CartDrawer />
-        <ChatWidget />
+        <MinervaLauncher />
       </div>
+      </MinervaProvider>
     </CartProvider>
   )
 }

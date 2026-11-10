@@ -5,7 +5,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join, basename } from 'node:path'
 
 const STOP = new Set(
-  'a an and are as at be but by can do does for from has have how i if in is it its me my of on or our so than that the their then there these they this to was we what when where which who will with you your tell about please kya hai hain ka ki ke ko se me mein aur ye woh'.split(
+  'a an and are as at be but by can do does for from has have how i if in is it its me my of on or our so than that the their then there these they this to was we what when where which who will with you your tell about please kya hai hain ka ki ke ko se me mein aur ye woh s t'.split(
     ' ',
   ),
 )
@@ -18,6 +18,13 @@ export function stem(w) {
   if (w.length > 3 && w.endsWith('es')) return w.slice(0, -2)
   if (w.length > 3 && w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1)
   return w
+}
+
+// Rewrites a few phrasings whose content words are all stopwords ("what's in it?").
+export function expandQuery(query) {
+  return String(query)
+    .replace(/\bwhat(?:'|\u2019)?s?\s+(?:is\s+)?(?:in|inside)\s+(?:it|this|the gel|the product|eyecojic)\b/gi, 'ingredients')
+    .replace(/\bwhat\s+is\s+it\s+made\s+(?:of|from)\b/gi, 'ingredients')
 }
 
 export function tokenize(text) {
@@ -96,7 +103,7 @@ export class Bm25Retriever {
 
   // Same interface the future embedding retriever must expose.
   search(query, k = 4) {
-    const q = [...new Set(tokenize(query))]
+    const q = [...new Set(tokenize(expandQuery(query)))]
     const N = this.docs.length
     const scored = this.chunks.map((chunk, i) => {
       const { tf, len } = this.docs[i]
