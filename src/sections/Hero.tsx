@@ -4,6 +4,7 @@ import { gsap, ScrollTrigger } from '../hooks/useSmoothScroll'
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -24,6 +25,20 @@ export default function Hero() {
       })
       ScrollTrigger.refresh()
     }, root)
+
+    // Fade video in only once it can play — prevents the poster/glitch flash
+    const video = videoRef.current
+    if (video) {
+      video.style.opacity = '0'
+      const handleCanPlay = () => {
+        video.style.transition = 'opacity 0.4s ease'
+        video.style.opacity = '1'
+      }
+      video.addEventListener('canplay', handleCanPlay, { once: true })
+      // If already ready (cached), trigger immediately
+      if (video.readyState >= 3) handleCanPlay()
+    }
+
     return () => ctx.revert()
   }, [])
 
@@ -35,13 +50,13 @@ export default function Hero() {
     >
       {/* ── FULL BG VIDEO ── */}
       <video
+        ref={videoRef}
         src="/images/Woman_applying_under-eye_cream_1ad3a126.mp4"
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        poster="/images/hero.png"
         className="absolute inset-0 h-full w-full object-cover object-top"
       />
 
