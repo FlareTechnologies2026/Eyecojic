@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/*.mjs": {
+      "maxDuration": 30,
+      "includeFiles": "server/{kb,src}/**"
+    }
+  },
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+}

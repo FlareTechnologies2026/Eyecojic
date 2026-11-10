@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { Bm25Retriever, loadKb, buildContext } from './bm25.mjs'
 import { HANDOFF_TOOL, buildSystem } from './prompt.mjs'
 import { streamChat } from './anthropic.mjs'
@@ -14,12 +14,14 @@ if (existsSync(join(ROOT, '.env'))) process.loadEnvFile(join(ROOT, '.env'))
 const env = process.env
 const PORT = Number(env.PORT || 8787)
 const MODEL = env.CLAUDE_MODEL || 'claude-haiku-5-5'
-const TRUST_PROXY = env.TRUST_PROXY === '1'
+const ON_VERCEL = Boolean(env.VERCEL)
+const TRUST_PROXY = env.TRUST_PROXY === '1' || ON_VERCEL
 const ALLOWED = (env.ALLOWED_ORIGINS || 'http://localhost:3000')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
-const LOG_FILE = join(ROOT, 'data', 'escalations.jsonl')
+// Vercel functions can only write to /tmp.
+const LOG_FILE = ON_VERCEL ? '/tmp/eyecojic/escalations.jsonl' : join(ROOT, 'data', 'escalations.jsonl')
 
 const chunks = loadKb(join(ROOT, 'kb'))
 const retriever = new Bm25Retriever(chunks)
@@ -49,7 +51,13 @@ function clientIp(req) {
 
 function cors(req, res) {
   const origin = req.headers.origin
-  if (origin && ALLOWED.includes(origin)) {
+  // Same-origin calls (site and API on one host, as on Vercel) are always fine.
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || '')
+  let sameOrigin = false
+  try {
+    sameOrigin = Boolean(origin && host && new URL(origin).host === host)
+  } catch {}
+  if (origin && (sameOrigin || ALLOWED.includes(origin))) {
     res.setHeader('access-control-allow-origin', origin)
     res.setHeader('vary', 'origin')
     res.setHeader('access-control-allow-headers', 'content-type')
@@ -65,6 +73,24 @@ function json(res, status, body) {
 }
 
 async function readJson(req, limit = 32_768) {
+  // Vercel (and some proxies) may have parsed the body already.
+  if (req.body !== undefined && req.body !== null) {
+    const b = req.body
+    const tooBig = () => Object.assign(new Error('too large'), { status: 413 })
+    if (Buffer.isBuffer(b) || typeof b === 'string') {
+      const text = Buffer.isBuffer(b) ? b.toString('utf8') : b
+      if (Buffer.byteLength(text) > limit) throw tooBig()
+      try {
+        return JSON.parse(text || '{}')
+      } catch {
+        throw Object.assign(new Error('bad json'), { status: 400 })
+      }
+    }
+    if (typeof b === 'object') {
+      if (Buffer.byteLength(JSON.stringify(b)) > limit) throw tooBig()
+      return b
+    }
+  }
   let size = 0
   const parts = []
   for await (const c of req) {
@@ -183,7 +209,8 @@ async function escalate(req, res) {
   }
 }
 
-const server = createServer(async (req, res) => {
+// Request handler: used by the standalone server below and by the Vercel functions in api/.
+export async function handler(req, res) {
   const allowed = cors(req, res)
   if (req.method === 'OPTIONS') {
     res.writeHead(allowed ? 204 : 403)
@@ -208,6 +235,11 @@ const server = createServer(async (req, res) => {
     if (!res.headersSent) json(res, 500, { error: 'Server error.' })
     else res.end()
   }
-})
+}
 
-server.listen(PORT, () => console.log(`chat server on :${PORT} (${chunks.length} kb chunks, model ${MODEL})`))
+// Start listening only when run directly (npm start), not when imported by a Vercel function.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  createServer(handler).listen(PORT, () =>
+    console.log(`chat server on :${PORT} (${chunks.length} kb chunks, model ${MODEL})`),
+  )
+}
