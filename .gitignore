@@ -27,4 +27,4 @@ dist-ssr
 # chat server
 server/node_modules
 server/.env
-server/data/
+server/data/escalations.jsonl

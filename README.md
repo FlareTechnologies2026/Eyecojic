@@ -71,3 +71,17 @@ export default defineConfig([
   },
 ])
 ```
+
+## Minerva chat assistant
+
+Minerva (`/minerva`, plus the orb launcher on every page) is a deterministic intent-and-slot bot. It needs no
+API keys and sends chat text to no third-party service. Replies, buttons and flows live in
+`server/data/intents.json`; the server is in `server/` and runs on Vercel through `api/*.mjs`.
+
+```bash
+cd server && npm install && npm start   # chat server on :8787
+npm run dev                             # in the project root; Vite proxies /api to :8787
+```
+
+See `server/README.md` for the request format, how to edit flows, checks (`npm test`, `npm run eval`,
+`npm run smoke`) and production settings.

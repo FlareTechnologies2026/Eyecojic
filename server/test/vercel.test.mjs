@@ -2,17 +2,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import http from 'node:http'
 
-const parseSse = (text) =>
-  text
-    .split('\n\n')
-    .map((b) => b.split('\n').find((l) => l.startsWith('data:')))
-    .filter(Boolean)
-    .map((l) => JSON.parse(l.slice(5)))
-
-// Simulate Vercel: each api/*.mjs file's default export is called with (req, res);
+// Simulate Vercel: each api/*.mjs default export is called with (req, res);
 // Vercel may pre-parse req.body.
 async function startFakeVercel(preParse) {
-  delete process.env.ANTHROPIC_API_KEY
   delete process.env.SMTP_HOST
   const routes = {
     '/api/chat': (await import('../../api/chat.mjs')).default,
@@ -35,44 +27,60 @@ async function startFakeVercel(preParse) {
     await fn(req, res)
   })
   await new Promise((r) => server.listen(0, '127.0.0.1', r))
-  return { server, url: `http://127.0.0.1:${server.address().port}`, host: `127.0.0.1:${server.address().port}` }
+  const { port } = server.address()
+  return { server, url: `http://127.0.0.1:${port}`, host: `127.0.0.1:${port}` }
 }
 
+const json = { 'content-type': 'application/json' }
+const post = (url, body, headers = {}) =>
+  fetch(url, { method: 'POST', headers: { ...json, ...headers }, body: typeof body === 'string' ? body : JSON.stringify(body) })
+
 for (const preParse of [false, true]) {
-  test(`vercel functions: health, offline chat, bad json, same-origin, escalate (preParsedBody=${preParse})`, async () => {
+  test(`api contract: health, turns, slot flow, CORS, bad input, escalate (preParsedBody=${preParse})`, async () => {
     const { server, url, host } = await startFakeVercel(preParse)
-    const json = { 'content-type': 'application/json' }
     try {
       const h = await (await fetch(`${url}/api/health`)).json()
       assert.equal(h.ok, true)
-      assert.equal(h.mode, 'offline')
+      assert.equal(h.mode, 'intent')
+      assert.ok(h.intents > 10)
+      assert.equal(h.emailConfigured, false)
 
-      // The browser sends Origin on same-origin POSTs; it must be accepted.
-      const r = await fetch(`${url}/api/chat`, {
-        method: 'POST',
-        headers: { ...json, origin: `http://${host}` },
-        body: JSON.stringify({ messages: [{ role: 'user', content: 'How do I use it?' }] }),
-      })
+      // Same-origin browser POST (carries Origin) is accepted; plain JSON, no SSE.
+      const r = await post(`${url}/api/chat`, { text: 'How do I use it?', state: {} }, { origin: `http://${host}` })
       assert.equal(r.status, 200)
-      assert.match(r.headers.get('content-type'), /text\/event-stream/)
-      const events = parseSse(await r.text())
-      assert.ok(events.some((e) => e.type === 'text' && e.text))
-      assert.equal(events.at(-1).type, 'done')
+      assert.match(r.headers.get('content-type'), /application\/json/)
+      const turn = await r.json()
+      assert.match(turn.messages[0].text, /pea-sized/)
+      assert.ok(Array.isArray(turn.buttons))
+      assert.equal(turn.state.intent, 'how_to_use')
 
-      const other = await fetch(`${url}/api/chat`, {
-        method: 'POST',
-        headers: { ...json, origin: 'https://evil.example' },
-        body: '{}',
-      })
-      assert.equal(other.status, 403)
+      // Button turn into the slot flow, then fill it with the state echoed back.
+      const ask = await (await post(`${url}/api/chat`, { button: 'get_recommendations', state: turn.state })).json()
+      assert.equal(ask.state.slot, 'skin_tone')
+      const done = await (await post(`${url}/api/chat`, { text: 'fair', state: ask.state })).json()
+      assert.equal(done.state.intent, 'recommendation')
 
-      const bad = await fetch(`${url}/api/chat`, { method: 'POST', headers: json, body: '{nope' })
-      assert.equal(bad.status, 400)
+      const reaction = await (await post(`${url}/api/chat`, { text: 'my eyes are itchy after using it' })).json()
+      assert.equal(reaction.handoff.category, 'reaction')
 
-      const esc = await fetch(`${url}/api/escalate`, { method: 'POST', headers: json, body: JSON.stringify({}) })
-      assert.equal(esc.status, 422)
+      assert.equal((await post(`${url}/api/chat`, '{}', { origin: 'https://evil.example' })).status, 403)
+      assert.equal((await post(`${url}/api/chat`, '{nope')).status, 400)
+      assert.equal((await post(`${url}/api/chat`, { text: '   ' })).status, 400)
+      assert.equal((await post(`${url}/api/escalate`, {})).status, 422)
+      assert.equal((await post(`${url}/api/escalate`, { website: 'spam' })).status, 200, 'honeypot looks successful')
     } finally {
       server.close()
     }
   })
 }
+
+test('chat is rate limited to 20 requests a minute per client', async () => {
+  const { server, url } = await startFakeVercel(false)
+  try {
+    const statuses = []
+    for (let i = 0; i < 22; i++) statuses.push((await post(`${url}/api/chat`, { text: 'hi' }, { 'x-test': String(i) })).status)
+    assert.ok(statuses.includes(429))
+  } finally {
+    server.close()
+  }
+})

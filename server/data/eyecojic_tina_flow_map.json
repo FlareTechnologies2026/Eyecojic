@@ -1,0 +1,46 @@
+{
+  "_source": "Walked live on eyecojic.com widget (Tina by Gravitas AI, ClientConfigurationId 7a7b5bb8-aa9e-4b22-84d3-c861713180eb0) on 2026-11-25, fresh session per path. Reply texts are verbatim (HTML anchors kept).",
+  "bot": {"name": "Tina", "brand": "EyeCojic", "style": "emoji-heavy, short, D2C single-product", "platform_note": "Same Gravitas AI platform/Lex backend pattern as the Rkeon bot but a separate bot with its own intents (prefix EW_)."},
+  "welcome": {
+    "messages": [
+      "Hello! 👋 I'm Tina, your AI-powered assistant at EyeCojic 🔬 ✨. Here to revolutionize your skincare routine, I specialize in advanced solutions for dark circles and under-eye concerns 🌙👁️. I can guide you in choosing and purchasing products perfect for your skin.🧴 Let’s achieve radiant, youthful eyes together!",
+      "I’m here to help you find the perfect under-eye cream for your skin. To get started, I’ll need to take a look at your skin tone. Are you ready to upload an image?"
+    ],
+    "buttons": ["Yes", "No"]
+  },
+  "intents": {
+    "EW_Get_Recommendations": {
+      "trigger": "Yes (welcome) or 'Get Recommendations' button",
+      "message": "Great! Please take a clear photo of the area under your eyes in natural lighting. Make sure your face is well-lit and the image is in focus.~ Disclaimer - We do not store or retain images of your face. Your photo is used only for analysis and is deleted immediately afterward. Your privacy is our priority.",
+      "ui": "'Capture Image' button (camera/photo input)",
+      "NOT_CAPTURED": "Everything after the photo (skin-tone analysis and the recommendation reply). Not walked: it needs a face image upload, which was not done."
+    },
+    "EW_main_menu": {
+      "trigger": "No (welcome) or 'Main menu' button",
+      "message": "Please click on below buttons 👇 to explore the service provided by us:",
+      "buttons": ["About Us", "Product ", "Buy", "Contact Us"]
+    },
+    "EW_AboutUs": {
+      "message": "At EyeCojic 🔬 we specialize in advanced skincare for dark circles and under-eye concerns 🌟. Our creams use cutting-edge ingredients to rejuvenate and refresh, offering visible results 👁️✨. Our mission is to provide science-backed products that enhance your natural beauty 🌺. With a focus on quality and innovation, EyeCojic supports radiant, youthful eyes. Feel confident every day with a refreshed look! ✨.  Please click on the link to know more 🔗📖 <a href=\"https://eyecojic.com/about/\" target=\"_blank\">Click Here</a>",
+      "buttons": ["Product", "Get Recommendations", "Buy", "Contact Us", "Main menu"]
+    },
+    "EW_Product": {
+      "message": "✨👁️ Eyecojic-Under Eye Gel ✨Say goodbye to dark circles with Kojic Acid & Vitamin E! This gel brightens your skin, reduces fine lines, and refreshes tired eyes. 🌿 Safe for all skin types, it’s great for men and women aged 16-35. 🌸 Free from harsh chemicals, it's a gentle way to improve your eye area naturally. Use it every night for soft, glowing eyes! 👀",
+      "buttons": ["Buy", "Get Recommendations", "Contact Us", "About Us", "Main menu"]
+    },
+    "EW_Buy": {
+      "message": "🛒 Want to Buy This? 🛒You’re just a click away from getting this awesome product! 🚀 Click the link below to make your purchase quickly and easily. 💻✨ Your order will be processed in no time! 📦To buy this, click on this link: <a href=\"https://eyecojic.com/our-products/\" target=\"_blank\">Click Here</a>",
+      "buttons": [["Get Recommendations", "Contact Us", "About Us"], ["Main Menu"]]
+    },
+    "EW_ContactUs": {
+      "message": "You may contact us at 📞 +91-7840061316 or 📧 mail at info@eyecojic.com for any inquiries, support, or additional information. Our dedicated team is available to assist you with your needs. Please click on the link to know more 🔗📖 <a href=\"https://eyecojic.com/contact-us/\" target=\"_blank\">Click Here</a>",
+      "buttons": ["About Us ", "Product", "Get Recommendations", "Buy", "Main Menu"]
+    }
+  },
+  "differences_from_rkeon_bot": [
+    "Single product (Eyecojic Under Eye Gel), so no category slot or product cards.",
+    "Opens with a yes/no skin-tone image-upload gate; the key feature is photo-based recommendation (needs image analysis, which an intent/slot bot alone cannot do).",
+    "Main menu: About Us, Product, Buy, Contact Us (no Directors, Track Order or Feedback).",
+    "Buy and info replies are text plus links to eyecojic.com pages."
+  ]
+}

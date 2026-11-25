@@ -1,0 +1,310 @@
+{
+  "_about": "Single source of truth for Minerva. Flow and button names follow eyecojic_tina_flow_map.json; product, policy and safety wording comes from the former server/kb. Edit replies here, not in code.",
+
+  "buttons": {
+    "about_us": "About Us",
+    "product": "Product",
+    "buy": "Buy",
+    "contact_us": "Contact Us",
+    "get_recommendations": "Get Recommendations",
+    "main_menu": "Main menu",
+    "how_to_use": "How to use",
+    "key_ingredients": "Ingredients",
+    "shipping": "Delivery",
+    "returns": "Returns"
+  },
+
+  "synonyms": {
+    "kaise": "how",
+    "lagaye": "apply",
+    "lagau": "apply",
+    "lagana": "apply",
+    "lagaun": "apply",
+    "istemal": "use",
+    "daam": "price",
+    "keemat": "price",
+    "kimat": "price",
+    "aayega": "delivery",
+    "ayega": "delivery",
+    "wapas": "return",
+    "wapsi": "return",
+    "kharidna": "buy",
+    "kharide": "buy",
+    "kharid": "buy",
+    "khareedna": "buy",
+    "ingrediants": "ingredients",
+    "ingredents": "ingredients",
+    "ingridients": "ingredients",
+    "delivry": "delivery",
+    "delievery": "delivery",
+    "retun": "return",
+    "refnd": "refund",
+    "prise": "price",
+    "pirce": "price",
+    "makeup": "makeup",
+    "concieler": "concealer",
+    "senstive": "sensitive",
+    "sensetive": "sensitive"
+  },
+
+  "rules": [
+    {
+      "intent": "reaction_handoff",
+      "all": [
+        "\\b(burn(ing|s|ed)?|sting(ing|s)?|itch(y|ing)?|rash(es)?|redness|red|swell(ing|ed)?|swollen|irritat\\w*|allerg\\w*|reaction|pain|painful|infect\\w*|watery|blur\\w*)\\b",
+        "\\b(eye|eyes|skin|face|under|used|using|applied|after|got|have|my)\\b"
+      ]
+    },
+    {
+      "intent": "medical_handoff",
+      "all": ["\\b(pregnan\\w*|breastfeed\\w*|nursing|medicat\\w*|medicine|prescription|disease|eczema|psoriasis|glaucoma|cataract|surgery|diagnos\\w*|doctor|dermatologist)\\b"]
+    },
+    {
+      "intent": "order_handoff",
+      "all": ["\\b(track\\w*|order status|where is my order|my order|mera order|order id|order number|payment|paid|invoice|my parcel|my package|not received|haven'?t received|didn'?t receive|cancel\\w*)\\b"],
+      "none": ["\\b(when will|how long|how many days|dispatch\\w*|return\\w*|refund\\w*)\\b"]
+    },
+    {
+      "intent": "human_handoff",
+      "all": ["\\b(human|real person|person|agent|representative|someone|talk to|speak to|speak with|call me|call back|complain\\w*|executive)\\b"]
+    },
+    {
+      "intent": "comparison_decline",
+      "all": ["\\b(better than|versus|vs\\.?|compare|compared|comparison|alternative to|garnier|olay|loreal|l'oreal|neutrogena|nivea|clinique|ordinary|minimalist|dot ?& ?key|mamaearth|plum|lakme|himalaya|biotique|ponds|pond's)\\b"]
+    },
+    {
+      "intent": "fallback",
+      "all": ["\\b(shelf life|expir\\w*|storage|store it|batch|inci|full ingredient\\w*|all ingredients|ingredient list|allergen\\w*|patch test\\w*|child\\w*|kids?|clinical\\w*|stud(y|ies)|percent\\w*|discount\\w*|coupon\\w*|promo\\w*|offers?|loyalty|international\\w*|outside india|abroad|overseas|retinol|hyaluronic|niacinamide|caffeine|peptide\\w*|other products?|threshold|minimum order)\\b"]
+    },
+    {
+      "intent": "welcome",
+      "all": ["^\\s*(hi+|hello|hey|hey there|namaste|hola|good (morning|afternoon|evening))\\b[\\s!.?,]*(minerva)?[\\s!.?]*$"]
+    },
+    {
+      "intent": "thanks",
+      "all": ["^\\s*(thanks|thank you|thank u|thx|ty|ok(ay)?|great|cool|got it|nice|perfect)\\b[\\s!.?,]*(minerva|so much|a lot)?[\\s!.?]*$"]
+    }
+  ],
+
+  "slots": {
+    "skin_tone": {
+      "prompt": "To suggest the right routine, tell me your skin tone.",
+      "values": [
+        { "value": "fair", "label": "Fair", "synonyms": ["fair", "light", "pale", "gori", "gora"] },
+        { "value": "medium", "label": "Medium", "synonyms": ["medium", "wheatish", "olive", "tan", "tanned", "moderate", "beige"] },
+        { "value": "deep", "label": "Deep", "synonyms": ["deep", "dusky", "dark", "brown", "sanwla", "saanwla", "sawla"] },
+        { "value": "not_sure", "label": "Not sure", "synonyms": ["not sure", "dont know", "don't know", "do not know", "idk", "unsure", "no idea", "pata nahi"] }
+      ],
+      "buttons": ["main_menu"],
+      "invalid": "Sorry, I did not catch that. Please choose Fair, Medium, Deep or Not sure.",
+      "next": "recommendation"
+    }
+  },
+
+  "intents": {
+    "welcome": {
+      "replies": [
+        "Hello! I'm Minerva, your virtual assistant at EyeCojic. I can help with dark circles and under-eye concerns, and guide you in choosing and purchasing the right product for your skin.",
+        "I'm here to help you find the right under-eye care for your skin. To get started, I'll ask about your skin tone. Are you ready?"
+      ],
+      "buttons": [
+        { "label": "Yes", "value": "get_recommendations" },
+        { "label": "No", "value": "main_menu" }
+      ],
+      "utterances": ["start", "get started", "begin", "lets start", "lets begin"]
+    },
+
+    "main_menu": {
+      "replies": ["Please click on below buttons to explore the service provided by us:"],
+      "buttons": ["about_us", "product", "buy", "contact_us"],
+      "utterances": ["menu", "main menu", "help", "options", "start over", "go back", "back", "services"]
+    },
+
+    "about_us": {
+      "replies": [
+        "At EyeCojic we focus on care for dark circles and under-eye concerns. Eyecojic comes from a legacy of eye care that dates back to 1973, and the formula was developed through research with specialists and scientists who work on eye issues. Please click on the link to know more: /about"
+      ],
+      "buttons": ["product", "get_recommendations", "buy", "contact_us", "main_menu"],
+      "utterances": ["about us", "about eyecojic", "your company", "mission", "eyecojic company", "know more about you"]
+    },
+
+    "brand_about": {
+      "replies": [
+        "Eyecojic comes from a legacy of eye care that dates back to 1973. RLS is a trusted name in ophthalmic care in India, started in 1973, with a pan-India presence, more than 250 employees, a head office in Prayagraj and a corporate office in Noida, Uttar Pradesh. The Eyecojic formula was developed through research with specialists and scientists who work on eye issues."
+      ],
+      "buttons": ["about_us", "product", "main_menu"],
+      "utterances": ["who makes", "makes eyecojic", "made by", "manufacturer", "manufactured", "rls", "history", "company history", "1973", "founded", "brand", "ophthalmic", "owner"]
+    },
+
+    "product": {
+      "replies": [
+        "Eyecojic Under Eye Gel is a light, cooling gel formulated with 2% Kojic Acid and Vitamin E. It is made to reduce the appearance of dark circles, brighten the under-eye area and nourish the delicate skin around the eyes. The texture is lightweight and absorbs quickly without a sticky residue."
+      ],
+      "buttons": ["buy", "get_recommendations", "contact_us", "about_us", "main_menu"],
+      "utterances": ["product", "products", "what does it do", "what is it", "dark circles", "dark circle", "under eye gel", "eye gel", "benefits", "benefit", "texture", "cooling", "brighten", "puffiness", "under eye"]
+    },
+
+    "key_ingredients": {
+      "replies": [
+        "The gel contains 2% Kojic Acid and Vitamin E. Kojic Acid is described on our site as a targeted ingredient that helps fade the look of dark under-eye circles. Vitamin E is an antioxidant that helps protect the delicate skin around the eyes. The formula is paraben-free, vegan and cruelty-free."
+      ],
+      "buttons": ["product", "buy", "main_menu"],
+      "utterances": ["ingredients", "ingredient", "kojic acid", "kojic", "vitamin e", "vitamin", "formula", "paraben", "vegan", "cruelty free", "contains", "contain", "made of", "made from", "chemicals"]
+    },
+
+    "how_to_use": {
+      "replies": [
+        "Dot a pea-sized amount onto your ring finger. Gently tap it around the under-eye area from the inner corner to the outer corner, then let it absorb completely. Use it in the morning and evening on clean skin."
+      ],
+      "buttons": ["product", "buy", "main_menu"],
+      "utterances": ["how to use", "use", "apply", "application", "directions", "instructions", "routine", "how much", "pea sized", "when to apply", "morning", "night", "evening", "daily", "how often", "times a day"]
+    },
+
+    "results_timeline": {
+      "replies": [
+        "Most customers notice a visible difference within 2 to 4 weeks of consistent daily use, using it morning and night as part of a regular routine. Individual results vary."
+      ],
+      "buttons": ["how_to_use", "buy", "main_menu"],
+      "utterances": ["results", "result", "how long", "how soon", "weeks", "week", "see results", "work", "works", "working", "timeline", "visible difference", "effect", "effective", "difference"]
+    },
+
+    "suitability_sensitive_skin": {
+      "replies": [
+        "The gel is dermatologically tested and designed to be gentle enough for daily use around the delicate eye area. It is paraben-free, vegan and cruelty-free."
+      ],
+      "buttons": ["key_ingredients", "buy", "main_menu"],
+      "utterances": ["sensitive skin", "sensitive", "safe", "safety", "dermatologically tested", "dermatologist tested", "tested", "gentle", "skin type", "oily skin", "dry skin", "combination skin", "harsh"]
+    },
+
+    "use_under_makeup": {
+      "replies": [
+        "Yes. The gel absorbs quickly and leaves no sticky residue, so it works as a base before concealer or other makeup."
+      ],
+      "buttons": ["how_to_use", "buy", "main_menu"],
+      "utterances": ["makeup", "make up", "under makeup", "concealer", "primer", "sticky", "residue", "foundation", "greasy", "oily feel"]
+    },
+
+    "size_price": {
+      "replies": [
+        "Eyecojic Under Eye Gel comes in a 15 g pack. The price shown on the product page is Rs. 349. Prices can change, so the product page is the source of truth at checkout."
+      ],
+      "buttons": ["buy", "main_menu"],
+      "utterances": ["price", "cost", "costs", "how much", "how much cost", "size", "grams", "gram", "15 g", "rs", "rupees", "inr", "mrp", "quantity", "tube", "pack", "expensive", "cheap"]
+    },
+
+    "shipping": {
+      "replies": [
+        "Orders placed on the website are usually dispatched within 2 to 3 business days of order confirmation. Standard shipping within India typically takes 5 to 7 business days. Delivery times are estimates and can be delayed by courier issues, holidays or other causes. Shipping charges, if any, are shown at checkout before you confirm. Free shipping is offered above a certain order value that may change from time to time and is shown on the website."
+      ],
+      "buttons": ["returns", "buy", "main_menu"],
+      "utterances": ["delivery", "deliver", "delivered", "shipping", "ship", "shipped", "dispatch", "dispatched", "courier", "how long delivery", "delivery time", "how many days", "arrive", "free shipping", "shipping charges", "when will it arrive"]
+    },
+
+    "returns": {
+      "replies": [
+        "Eligible products can be returned within 7 days of delivery. The product must be unused, unopened and in its original packaging, and you need proof of purchase such as the order confirmation or invoice. For orders placed on the website, email info@eyecojic.com with your order details and the reason for return. After the returned product is received and inspected, the refund goes to the original payment method within 7 to 10 business days. Return shipping is paid by the customer unless the return is due to the company's error or a defective product. Orders bought on Amazon, Flipkart or Myntra must be returned through that marketplace's own return policy."
+      ],
+      "buttons": ["shipping", "contact_us", "main_menu"],
+      "utterances": ["return", "returns", "return policy", "refund", "refunds", "money back", "exchange", "damaged", "defective", "unopened", "proof of purchase", "replace", "replacement"]
+    },
+
+    "delivery_returns": {
+      "replies": ["@shipping", "@returns"],
+      "buttons": ["buy", "contact_us", "main_menu"],
+      "utterances": ["delivery returns", "delivery and returns", "shipping returns", "shipping and returns", "delivery refund"]
+    },
+
+    "buy": {
+      "replies": [
+        "Want to buy Eyecojic Under Eye Gel? You can order it on our website here: /shop. It is also available on Amazon, Flipkart and Myntra."
+      ],
+      "buttons": ["get_recommendations", "contact_us", "about_us", { "label": "Main Menu", "value": "main_menu" }],
+      "utterances": ["buy", "purchase", "where to buy", "where can i buy", "order online", "how to order", "place order", "place an order", "amazon", "flipkart", "myntra", "shop", "store", "available", "availability", "online"]
+    },
+
+    "contact_us": {
+      "replies": [
+        "You may contact us at +91-7840061316 or mail us at info@eyecojic.com for any inquiries, support, or additional information. Our dedicated team is available to assist you with your needs. Please click on the link to know more: /contact"
+      ],
+      "buttons": [
+        { "label": "About Us", "value": "about_us" },
+        "product",
+        "get_recommendations",
+        "buy",
+        { "label": "Main Menu", "value": "main_menu" }
+      ],
+      "utterances": ["contact us", "contact", "get in touch", "reach out"]
+    },
+
+    "contact_details": {
+      "replies": ["You can email info@eyecojic.com or call +91-7840061316. The Contact page on the website also has a form: /contact"],
+      "buttons": ["contact_us", "main_menu"],
+      "utterances": ["phone", "phone number", "number", "mobile", "email", "mail", "email address", "call", "customer care", "customer support", "support", "helpline", "whatsapp", "reach you"]
+    },
+
+    "get_recommendations": {
+      "slot": "skin_tone",
+      "utterances": ["recommendation", "recommendations", "get recommendations", "recommend", "suggest", "suggestion", "which product", "right for me", "skin tone", "my skin tone", "suits me", "suit me"]
+    },
+
+    "recommendation": {
+      "replies": [
+        "Thank you. Eyecojic Under Eye Gel is the same for every skin tone. It is a light, cooling gel with 2% Kojic Acid and Vitamin E, formulated to help reduce the appearance of dark circles.",
+        "How to use: dot a pea-sized amount onto your ring finger, gently tap it around the under-eye area from the inner corner to the outer corner, and let it absorb. Use it in the morning and evening on clean skin. Individual results vary."
+      ],
+      "buttons": ["buy", "product", "contact_us", "main_menu"]
+    },
+
+    "reaction_handoff": {
+      "replies": [
+        "I am sorry to hear that. Please stop using the product, rinse the area gently with water, and see a doctor if it continues. I cannot say what caused it, but our team would like to follow up. You can share your details with them below."
+      ],
+      "buttons": ["main_menu"],
+      "handoff": { "category": "reaction", "reason": "Customer reports a skin or eye reaction after use." }
+    },
+
+    "medical_handoff": {
+      "replies": [
+        "I am a virtual assistant and cannot give medical advice. Please ask your doctor about this. Our team can also take a note if you would like to share your question."
+      ],
+      "buttons": ["main_menu"],
+      "handoff": { "category": "medical", "reason": "Customer asked a medical question." }
+    },
+
+    "order_handoff": {
+      "replies": [
+        "I cannot see or track individual orders. Our team can help with order or payment questions, so please leave your details below."
+      ],
+      "buttons": ["main_menu"],
+      "handoff": { "category": "order", "reason": "Customer has an order or payment question." }
+    },
+
+    "human_handoff": {
+      "replies": [
+        "Of course. You can email info@eyecojic.com or call +91-7840061316. You can also leave your details below and the team will reply by email."
+      ],
+      "buttons": ["main_menu"],
+      "handoff": { "category": "requested_human", "reason": "Customer asked to speak with the team." }
+    },
+
+    "comparison_decline": {
+      "replies": [
+        "I can only speak about Eyecojic Under Eye Gel, so I am not able to compare it with other products. I am happy to explain what is in it and how to use it."
+      ],
+      "buttons": ["key_ingredients", "how_to_use", "main_menu"]
+    },
+
+    "thanks": {
+      "replies": ["You're welcome! Ask me anything else about Eyecojic whenever you like."],
+      "buttons": ["main_menu"]
+    },
+
+    "fallback": {
+      "replies": [
+        "I do not have that information. Our team can answer it, so please leave your details below and they will reply by email."
+      ],
+      "buttons": ["main_menu"],
+      "handoff": { "category": "unanswered", "reason": "Customer asked: {text}" }
+    }
+  }
+}

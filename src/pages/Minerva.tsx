@@ -6,7 +6,14 @@ import { useMinerva } from '../hooks/useMinerva'
 import { sendEscalation } from '../lib/chatApi'
 import { linkify } from '../lib/linkify'
 
-const CHIPS = ['How do I use it?', "What's in it?", 'Is it safe for sensitive skin?', 'Delivery & returns', 'Where to buy']
+// Hero chips send intent ids (server/data/intents.json), not free text.
+const CHIPS = [
+  { label: 'How do I use it?', value: 'how_to_use' },
+  { label: "What's in it?", value: 'key_ingredients' },
+  { label: 'Is it safe for sensitive skin?', value: 'suitability_sensitive_skin' },
+  { label: 'Delivery & returns', value: 'delivery_returns' },
+  { label: 'Where to buy', value: 'buy' },
+]
 const DISCLAIMER =
   'Minerva is a virtual assistant, not a doctor. If your skin reacts, stop using the product and see a doctor.'
 
@@ -162,8 +169,8 @@ export default function Minerva() {
           </div>
           <div className="mt-5 flex max-w-xl flex-wrap justify-center gap-2">
             {CHIPS.map((c) => (
-              <button key={c} onClick={() => submit(c)} className={pill}>
-                {c}
+              <button key={c.value} onClick={() => m.sendButton(c.value, c.label)} disabled={m.busy} className={pill}>
+                {c.label}
               </button>
             ))}
           </div>
@@ -204,6 +211,15 @@ export default function Minerva() {
                       <button onClick={m.openForm} className="mt-3 rounded-full bg-umber px-5 py-2 text-sm text-ivory transition-colors hover:bg-umber/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2">
                         Contact our team
                       </button>
+                    )}
+                    {i === m.messages.length - 1 && m.buttons.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Quick replies">
+                        {m.buttons.map((b) => (
+                          <button key={b.value + b.label} onClick={() => m.sendButton(b.value, b.label)} className={pill}>
+                            {b.label}
+                          </button>
+                        ))}
+                      </div>
                     )}
                   </div>
                 )}
