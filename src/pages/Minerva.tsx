@@ -18,6 +18,10 @@ const CHIPS = [
 const DISCLAIMER =
   'Minerva is a virtual assistant, not a doctor. If your skin reacts, stop using the product and see a doctor.'
 
+const SCROLL_MS = 300
+// Approximates cubic-bezier(.22,1,.36,1), the easing of the orb move.
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 4)
+
 const pill =
   'rounded-full border border-umber/15 bg-white/70 px-4 py-2 text-sm text-umber backdrop-blur-sm transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-umber'
 
@@ -76,15 +80,40 @@ export default function Minerva() {
     ;(m.started ? dockInput : heroInput).current?.focus()
   }, [m.started, m.formOpen])
 
-  // Keep the newest text in view; for a long reply, anchor to its first line instead of its last.
+  // Scrolling. Only runs when the shape of the list changes (a message added or replaced, the indicator
+  // leaving), not when a finished reveal flips its flag, so it never fights a scroll in progress.
+  //  - just sent (last message is the thinking placeholder): one smooth scroll to the bottom;
+  //  - anything else (answer shown, reveal running): instant, and a long reply anchors to its first line.
+  // The reveal only changes opacity, so the reply has its full height from the start and needs no follow.
+  // Reduced motion: always instant. Only one scroll runs at a time: an instant one cancels the eased one.
+  const scrollAnim = useRef(0)
+  useEffect(() => () => cancelAnimationFrame(scrollAnim.current), [])
+  const last = m.messages[m.messages.length - 1]
+  const scrollKey = `${m.messages.length}:${last?.id ?? 0}:${last?.pending ?? ''}`
   useEffect(() => {
     const el = listRef.current
     if (!el) return
-    const last = el.querySelector<HTMLElement>('[data-last="true"]')
+    const lastEl = el.querySelector<HTMLElement>('[data-last="true"]')
     const pad = window.innerWidth < 640 ? 136 : 88
-    if (last && last.offsetHeight > el.clientHeight - pad - 24) el.scrollTop = Math.max(0, last.offsetTop - pad)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    cancelAnimationFrame(scrollAnim.current)
+    if (last?.pending === 'thinking' && !reduced) {
+      // Eased scroll over ~300ms with the page's orb easing (rAF, so it is cancellable and browser-independent).
+      const from = el.scrollTop
+      const t0 = performance.now()
+      const step = (now: number) => {
+        const t = Math.min(1, (now - t0) / SCROLL_MS)
+        const to = el.scrollHeight - el.clientHeight // re-read: the new rows may still be settling
+        el.scrollTop = from + (to - from) * easeOut(t)
+        if (t < 1) scrollAnim.current = requestAnimationFrame(step)
+      }
+      scrollAnim.current = requestAnimationFrame(step)
+      return
+    }
+    if (lastEl && lastEl.offsetHeight > el.clientHeight - pad - 24) el.scrollTop = Math.max(0, lastEl.offsetTop - pad)
     else el.scrollTop = el.scrollHeight
-  }, [m.messages])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- scrollKey captures the changes that matter
+  }, [scrollKey])
 
   // Escape closes the form, otherwise goes Home (only when nothing is half-typed).
   useEffect(() => {
@@ -104,6 +133,8 @@ export default function Minerva() {
   }
 
   // Buttons fade in only for replies revealed while this page is open; history renders instantly.
+  // New bubbles (sent while this page is open) animate in; history and remounts render instantly.
+  const isNew = (msg: MinervaMessage) => (msg.createdAt ?? 0) > mountedAt
   const fadeIfNew = (msg: MinervaMessage) => ((msg.revealedAt ?? 0) > mountedAt ? 'minerva-fade-in' : '')
 
   return (
@@ -191,13 +222,13 @@ export default function Minerva() {
             {m.messages.map((msg, i) => (
               <div key={msg.id} data-last={i === m.messages.length - 1} className={msg.role === 'user' ? 'flex justify-end' : ''}>
                 {msg.role === 'user' ? (
-                  <p className="max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-umber px-4 py-2.5 text-sm leading-relaxed text-ivory">
+                  <p className={`${isNew(msg) ? 'minerva-bubble-in' : ''} max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-umber px-4 py-2.5 text-sm leading-relaxed text-ivory`}>
                     {msg.content}
                   </p>
                 ) : (
                   <div className="max-w-[92%]">
                     {msg.pending ? (
-                      <ThinkingIndicator leaving={msg.pending === 'leaving'} />
+                      <ThinkingIndicator leaving={msg.pending === 'leaving'} enter={isNew(msg)} />
                     ) : msg.revealed === false ? (
                       <RevealingReply text={msg.content} revealAt={msg.revealAt ?? 0} gap={msg.wordGap ?? 0} />
                     ) : (
@@ -247,12 +278,16 @@ export default function Minerva() {
 
 // "Minerva is thinking" followed by the small thinking orb. Collapses on the outer element (max-height + opacity)
 // with nothing clipped, so the orb's pulse never shows a rectangle edge.
-function ThinkingIndicator({ leaving }: { leaving: boolean }) {
+function ThinkingIndicator({ leaving, enter }: { leaving: boolean; enter: boolean }) {
   return (
     <div
       className={`transition-[max-height,opacity,transform] duration-[280ms] ease-out motion-reduce:transition-none ${leaving ? 'max-h-0 -translate-y-1 opacity-0' : 'max-h-12 opacity-100'}`}
     >
-      <span role="status" aria-label="Minerva is thinking" className="inline-flex items-center gap-2 py-0.5">
+      <span
+        role="status"
+        aria-label="Minerva is thinking"
+        className={`${enter ? 'minerva-thinking-in' : ''} inline-flex items-center gap-2 py-0.5`}
+      >
         <span aria-hidden="true" className="text-[15px] leading-relaxed text-umber">
           Minerva is thinking
         </span>
@@ -318,7 +353,7 @@ function Composer({
         type="submit"
         disabled={disabled || !value.trim()}
         aria-label="Send message"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bronze text-white transition-colors hover:bg-golddeep focus:outline-none focus-visible:ring-2 focus-visible:ring-umber focus-visible:ring-offset-2 disabled:opacity-45"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-bronze text-white transition-[background-color,opacity] duration-150 hover:bg-golddeep focus:outline-none focus-visible:ring-2 focus-visible:ring-umber focus-visible:ring-offset-2 disabled:opacity-45"
       >
         <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0-6 6m6-6 6 6" />

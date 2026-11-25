@@ -16,6 +16,8 @@ export type MinervaMessage = {
   /** Epoch ms when this message's first word starts fading in, and the delay between words. */
   revealAt?: number
   wordGap?: number
+  /** Epoch ms when the message was created; only messages newer than the page mount animate in. */
+  createdAt?: number
   /** Epoch ms when the reveal finished (used to fade in the buttons only right after it). */
   revealedAt?: number
 }

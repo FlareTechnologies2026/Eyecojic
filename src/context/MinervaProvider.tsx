@@ -62,8 +62,14 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
     const reduced = reducedMotion()
     const minPause = reduced ? THINK_REDUCED_MS : thinkDelay()
 
-    const userMsg: MinervaMessage = { id: nextId.current++, role: 'user', content: shown }
-    const placeholder: MinervaMessage = { id: nextId.current++, role: 'assistant', content: '', pending: 'thinking' }
+    const userMsg: MinervaMessage = { id: nextId.current++, role: 'user', content: shown, createdAt: sentAt }
+    const placeholder: MinervaMessage = {
+      id: nextId.current++,
+      role: 'assistant',
+      content: '',
+      pending: 'thinking',
+      createdAt: sentAt,
+    }
     setMessages((prev) => [...prev, userMsg, placeholder])
 
     const ac = new AbortController()
