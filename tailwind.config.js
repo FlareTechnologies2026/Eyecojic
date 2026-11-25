@@ -15,6 +15,7 @@ module.exports = {
         linen: '#FFE5E9',        // Blush (light accent areas)
         bronze: '#EF6077',       // Eyecojic Pink — primary brand color
         golddeep: '#D94F68',     // slightly deeper logo pink for hover
+        rosedeep: '#B83A50',     // darker pink for text: 4.9:1 on ivory (Minerva link hover/focus)
         umber: '#1E293B',        // Ink — dark text, dark backgrounds
         smoke: '#1E293B',        // Slate — body text (darkened to match Ink)
         border: "hsl(var(--border))",
