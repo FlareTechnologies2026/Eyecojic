@@ -5,8 +5,8 @@ export type MinervaMessage = {
   id: number
   role: 'user' | 'assistant'
   content: string
-  /** True when the assistant offered the human handoff on this turn. */
-  handoff?: boolean
+  /** Set when the assistant offered the human handoff on this turn; its "Contact our team" link uses it. */
+  handoff?: MinervaHandoff
   /** Quick replies offered with this message. Only the latest bot message's buttons are active. */
   buttons?: QuickReply[]
   /** Placeholder for a reply still on its way: the thinking indicator, then its fade-out. */
@@ -29,14 +29,11 @@ export type MinervaState = {
   busy: boolean
   started: boolean
   handoff: MinervaHandoff | null
-  formOpen: boolean
   /** Quick replies currently on screen (from the latest bot message). */
   buttons: QuickReply[]
   send: (text: string) => void
   sendButton: (value: string, label: string) => void
   reset: () => void
-  openForm: () => void
-  closeForm: () => void
 }
 
 export const MinervaContext = createContext<MinervaState | null>(null)

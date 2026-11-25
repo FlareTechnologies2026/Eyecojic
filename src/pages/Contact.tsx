@@ -1,12 +1,24 @@
-﻿import { useLayoutEffect, useRef, useState } from 'react'
+﻿import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useLocation } from 'react-router'
 import { gsap } from '../hooks/useSmoothScroll'
+import { useMinerva } from '../hooks/useMinerva'
+import { sendEscalation } from '../lib/chatApi'
+import { readContactState } from '../lib/contactHandoff'
 import Reviews from '../sections/Reviews'
+
+const fieldError = 'mt-1 block text-xs text-[#B42318]'
 
 
 export default function Contact() {
   const root = useRef<HTMLElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [serverError, setServerError] = useState('')
+  const handoff = readContactState(useLocation().state)
+  const { messages } = useMinerva()
 
   useLayoutEffect(() => {
     const context = gsap.context(() => {
@@ -36,9 +48,56 @@ export default function Contact() {
     return () => context.revert()
   }, [])
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  // Arriving from Minerva: bring the form into view once the page has reset its scroll (App scrolls to top
+  // after this effect) and the panel has started its reveal. Eased by gsap so there is no jump.
+  useEffect(() => {
+    if (!handoff.fromMinerva) return
+    const proxy = { y: 0 }
+    let tween: gsap.core.Tween | undefined
+    const id = window.setTimeout(() => {
+      const panel = panelRef.current
+      if (!panel) return
+      const nav = 96 // fixed nav height plus a little air
+      proxy.y = window.scrollY
+      const target = Math.max(0, panel.getBoundingClientRect().top + window.scrollY - nav)
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (reduced) return window.scrollTo(0, target)
+      tween = gsap.to(proxy, { y: target, duration: 0.8, ease: 'power2.out', onUpdate: () => window.scrollTo(0, proxy.y) })
+    }, 450)
+    return () => {
+      window.clearTimeout(id)
+      tween?.kill()
+    }
+  }, [handoff.fromMinerva])
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSent(true)
+    if (sending) return
+    const f = new FormData(event.currentTarget)
+    const get = (k: string) => String(f.get(k) ?? '').trim()
+    const subject = get('subject')
+    const body = get('message')
+    setSending(true)
+    setErrors({})
+    setServerError('')
+    const r = await sendEscalation({
+      name: get('name'),
+      email: get('email'),
+      message: subject ? `Subject: ${subject}\n\n${body}` : body,
+      category: handoff.category ?? 'contact_form',
+      consent: f.get('consent') === 'on',
+      website: get('website'),
+      transcript: messages
+        .filter((m) => m.content && !m.pending)
+        .slice(-10)
+        .map(({ role, content }) => ({ role, content })),
+    })
+    setSending(false)
+    if (r.ok) setSent(true)
+    else {
+      setErrors(r.errors ?? {})
+      setServerError(r.error ?? (r.errors ? '' : 'We could not send your message. Please email info@eyecojic.com.'))
+    }
   }
 
   return (
@@ -55,7 +114,7 @@ export default function Contact() {
         </div>
 
         {/* Form */}
-        <div className="contact-panel mb-20">
+        <div ref={panelRef} className="contact-panel mb-20">
           <div className="grid grid-cols-1 gap-0 overflow-hidden rounded-2xl shadow-sm md:grid-cols-2">
 
             {/* left — info panel */}
@@ -107,7 +166,7 @@ export default function Contact() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} noValidate className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
                       <label htmlFor="name" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Your name *</label>
@@ -116,6 +175,7 @@ export default function Contact() {
                         className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
                         placeholder="Priya Sharma"
                       />
+                      {errors.name && <span className={fieldError}>{errors.name}</span>}
                     </div>
                     <div>
                       <label htmlFor="email" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Email address *</label>
@@ -124,12 +184,13 @@ export default function Contact() {
                         className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
                         placeholder="priya@example.com"
                       />
+                      {errors.email && <span className={fieldError}>{errors.email}</span>}
                     </div>
                   </div>
                   <div>
                     <label htmlFor="subject" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Subject *</label>
                     <input
-                      id="subject" name="subject" required
+                      id="subject" name="subject" required defaultValue={handoff.subject}
                       className="w-full rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
                       placeholder="Product enquiry"
                     />
@@ -137,17 +198,34 @@ export default function Contact() {
                   <div>
                     <label htmlFor="message" className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.3em] text-umber">Message</label>
                     <textarea
-                      id="message" name="message" rows={4}
+                      id="message" name="message" rows={4} defaultValue={handoff.reason}
                       className="w-full resize-none rounded-lg border border-umber/15 bg-[#fdf6f0] px-4 py-3 text-sm outline-none transition-colors focus:border-bronze"
                       placeholder="Tell us how we can help..."
                     />
+                    {errors.message && <span className={fieldError}>{errors.message}</span>}
+                  </div>
+                  {/* honeypot: hidden from people and assistive tech, bots fill it */}
+                  <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                    <label>
+                      Website
+                      <input name="website" tabIndex={-1} autoComplete="off" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-start gap-3 text-sm leading-snug text-umber">
+                      <input type="checkbox" name="consent" className="mt-0.5 h-4 w-4 shrink-0 accent-[#EF6077]" />
+                      <span>I agree that the Eyecojic team may contact me by email about this request.</span>
+                    </label>
+                    {errors.consent && <span className={fieldError}>{errors.consent}</span>}
                   </div>
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-bronze py-4 text-[11px] uppercase tracking-[0.35em] text-ivory transition-colors hover:bg-bronze"
+                    disabled={sending}
+                    className="w-full rounded-lg bg-bronze py-4 text-[11px] uppercase tracking-[0.35em] text-ivory transition-colors hover:bg-bronze disabled:opacity-60"
                   >
                     Send Message →
                   </button>
+                  {serverError && <p className="text-sm text-[#B42318]" role="alert">{serverError}</p>}
                 </form>
               )}
             </div>

@@ -24,7 +24,6 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<MinervaMessage[]>([])
   const [busy, setBusy] = useState(false)
   const [handoff, setHandoff] = useState<MinervaHandoff | null>(null)
-  const [formOpen, setFormOpen] = useState(false)
 
   const busyRef = useRef(false)
   const nextId = useRef(1)
@@ -109,8 +108,8 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
       if (!isError) {
         last.buttons = r.buttons ?? []
         if (r.handoff) {
-          last.handoff = true
-          setHandoff({ category: r.handoff.category, reason: r.handoff.reason })
+          last.handoff = { category: r.handoff.category, reason: r.handoff.reason }
+          setHandoff(last.handoff)
         }
       }
       replacePlaceholder(bots)
@@ -155,7 +154,6 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
     setBusy(false)
     setMessages([])
     setHandoff(null)
-    setFormOpen(false)
   }, [cancelAll])
 
   const value = useMemo(() => {
@@ -165,15 +163,12 @@ export function MinervaProvider({ children }: { children: ReactNode }) {
       busy,
       started: messages.length > 0,
       handoff,
-      formOpen,
       buttons: !busy && last?.role === 'assistant' ? (last.buttons ?? []) : [],
       send,
       sendButton,
       reset,
-      openForm: () => setFormOpen(true),
-      closeForm: () => setFormOpen(false),
     }
-  }, [messages, busy, handoff, formOpen, send, sendButton, reset])
+  }, [messages, busy, handoff, send, sendButton, reset])
 
   return <MinervaContext.Provider value={value}>{children}</MinervaContext.Provider>
 }
