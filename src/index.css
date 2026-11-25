@@ -134,3 +134,40 @@
     animation: none;
   }
 }
+
+/* Site-wide scrollbar: slim bronze pill on a transparent track, no arrows.
+   Chromium/Safari use ::-webkit-scrollbar. Firefox gets the standard properties inside a Firefox-only block,
+   because in Chrome setting scrollbar-color/scrollbar-width turns the ::-webkit-scrollbar styling off. */
+::-webkit-scrollbar {
+  width: 12px;  /* 8px visible thumb + 2px transparent border each side */
+  height: 12px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+::-webkit-scrollbar-thumb {
+  min-height: 40px;
+  min-width: 40px;
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background-clip: padding-box;
+  background-color: rgba(239, 96, 119, 0.35); /* bronze #EF6077 at 35% */
+  transition: background-color 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background-color: rgba(239, 96, 119, 0.65);
+}
+
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(239, 96, 119, 0.35) transparent;
+  }
+}
