@@ -3,11 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "engines": { "node": ">=20.12" },
+  "engines": { "node": ">=22.6" },
   "scripts": {
     "start": "node src/index.mjs",
     "dev": "node --watch src/index.mjs",
-    "test": "node --test",
+    "test": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test",
     "eval": "node eval/run.mjs",
     "smoke": "node eval/smoke.mjs"
   },

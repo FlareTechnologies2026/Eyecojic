@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import type { LinkKind } from '../lib/linkify'
+import type { LinkKind } from '../lib/chatFormat'
 
 // One style for every link in a Minerva reply: bold umber text at rest, no underline. On hover and keyboard
 // focus the text turns rosedeep (4.9:1 on ivory; bronze and golddeep are under 4.5:1) and an underline appears.

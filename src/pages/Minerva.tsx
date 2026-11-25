@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router'
 import Orb from '../components/minerva/Orb'
 import { useMinerva } from '../hooks/useMinerva'
 import { sendEscalation } from '../lib/chatApi'
-import { linkify } from '../lib/linkify'
+import { renderReply } from '../lib/linkify'
 
 // Hero chips send intent ids (server/data/intents.json), not free text.
 const CHIPS = [
@@ -194,9 +194,7 @@ export default function Minerva() {
                 ) : (
                   <div className="max-w-[92%]">
                     {msg.content ? (
-                      <p className="whitespace-pre-wrap break-words text-[15px] leading-relaxed">
-                        {linkify(msg.content)}
-                      </p>
+                      renderReply(msg.content)
                     ) : (
                       typing &&
                       i === m.messages.length - 1 && (

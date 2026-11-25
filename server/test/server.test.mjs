@@ -156,7 +156,7 @@ test('previously supported FAQs still answer from the old knowledge base wording
   assert.match(allText(say('How long until I see results?')), /2 to 4 weeks/)
   assert.match(allText(say('Is it safe for sensitive skin?')), /dermatologically tested/)
   assert.match(allText(say('Can I wear it under makeup?')), /concealer/)
-  assert.match(allText(say('What is the price?')), /15 g.*Rs\. 349/)
+  assert.match(allText(say('What is the price?')), /15 g[\s\S]*Rs\. 349/)
   assert.match(allText(say('How long does delivery take?')), /5 to 7 business days/)
   assert.match(allText(say('What is your return policy?')), /7 days of delivery/)
   assert.match(allText(say('Where can I buy it?')), /Amazon, Flipkart and Myntra/)

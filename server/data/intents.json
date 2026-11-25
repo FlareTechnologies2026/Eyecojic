@@ -122,7 +122,7 @@
 
     "about_us": {
       "replies": [
-        "At EyeCojic we focus on care for dark circles and under-eye concerns. Eyecojic comes from a legacy of eye care that dates back to 1973, and the formula was developed through research with specialists and scientists who work on eye issues. You can read more on our [About page](/about)."
+        "At EyeCojic we focus on care for dark circles and under-eye concerns:\n• **Heritage:** Eyecojic comes from a legacy of eye care that dates back to 1973\n• **Research:** the formula was developed through research with specialists and scientists who work on eye issues\nYou can read more on our [About page](/about)."
       ],
       "buttons": ["product", "get_recommendations", "buy", "contact_us", "main_menu"],
       "utterances": ["about us", "about eyecojic", "your company", "mission", "eyecojic company", "know more about you"]
@@ -130,7 +130,7 @@
 
     "brand_about": {
       "replies": [
-        "Eyecojic comes from a legacy of eye care that dates back to 1973. RLS is a trusted name in ophthalmic care in India, started in 1973, with a pan-India presence, more than 250 employees, a head office in Prayagraj and a corporate office in Noida, Uttar Pradesh. The Eyecojic formula was developed through research with specialists and scientists who work on eye issues."
+        "Eyecojic comes from a legacy of eye care that dates back to 1973:\n• **RLS:** a trusted name in ophthalmic care in India, started in 1973\n• **Reach:** a pan-India presence and more than 250 employees\n• **Offices:** a head office in Prayagraj and a corporate office in Noida, Uttar Pradesh\n• **Research:** the Eyecojic formula was developed through research with specialists and scientists who work on eye issues"
       ],
       "buttons": ["about_us", "product", "main_menu"],
       "utterances": ["who makes", "makes eyecojic", "made by", "manufacturer", "manufactured", "rls", "history", "company history", "1973", "founded", "brand", "ophthalmic", "owner"]
@@ -138,7 +138,7 @@
 
     "product": {
       "replies": [
-        "Eyecojic Under Eye Gel is a light, cooling gel formulated with 2% Kojic Acid and Vitamin E. It is made to reduce the appearance of dark circles, brighten the under-eye area and nourish the delicate skin around the eyes. The texture is lightweight and absorbs quickly without a sticky residue."
+        "Eyecojic Under Eye Gel is a light, cooling gel:\n• **Formula:** 2% Kojic Acid and Vitamin E\n• **Made to:** reduce the appearance of dark circles, brighten the under-eye area and nourish the delicate skin around the eyes\n• **Texture:** lightweight, and absorbs quickly without a sticky residue"
       ],
       "buttons": ["buy", "get_recommendations", "contact_us", "about_us", "main_menu"],
       "utterances": ["product", "products", "what does it do", "what is it", "dark circles", "dark circle", "under eye gel", "eye gel", "benefits", "benefit", "texture", "cooling", "brighten", "puffiness", "under eye"]
@@ -146,7 +146,7 @@
 
     "key_ingredients": {
       "replies": [
-        "The gel contains 2% Kojic Acid and Vitamin E. Kojic Acid is described on our site as a targeted ingredient that helps fade the look of dark under-eye circles. Vitamin E is an antioxidant that helps protect the delicate skin around the eyes. The formula is paraben-free, vegan and cruelty-free."
+        "The gel contains 2% Kojic Acid and Vitamin E:\n• **Kojic Acid:** described on our site as a targeted ingredient that helps fade the look of dark under-eye circles\n• **Vitamin E:** an antioxidant that helps protect the delicate skin around the eyes\n• **Formula:** paraben-free, vegan and cruelty-free"
       ],
       "buttons": ["product", "buy", "main_menu"],
       "utterances": ["ingredients", "ingredient", "kojic acid", "kojic", "vitamin e", "vitamin", "formula", "paraben", "vegan", "cruelty free", "contains", "contain", "made of", "made from", "chemicals"]
@@ -154,7 +154,7 @@
 
     "how_to_use": {
       "replies": [
-        "Dot a pea-sized amount onto your ring finger. Gently tap it around the under-eye area from the inner corner to the outer corner, then let it absorb completely. Use it in the morning and evening on clean skin."
+        "Here is how to use it:\n• Dot a pea-sized amount onto your ring finger\n• Gently tap it around the under-eye area, from the inner corner to the outer corner\n• Let it absorb completely\n• Use it in the morning and evening on clean skin"
       ],
       "buttons": ["product", "buy", "main_menu"],
       "utterances": ["how to use", "use", "apply", "application", "directions", "instructions", "routine", "how much", "pea sized", "when to apply", "morning", "night", "evening", "daily", "how often", "times a day"]
@@ -162,7 +162,7 @@
 
     "results_timeline": {
       "replies": [
-        "Most customers notice a visible difference within 2 to 4 weeks of consistent daily use, using it morning and night as part of a regular routine. Individual results vary."
+        "Here is what to expect:\n• Most customers notice a visible difference within 2 to 4 weeks of consistent daily use\n• Use it morning and night as part of a regular routine\n• Individual results vary"
       ],
       "buttons": ["how_to_use", "buy", "main_menu"],
       "utterances": ["results", "result", "how long", "how soon", "weeks", "week", "see results", "work", "works", "working", "timeline", "visible difference", "effect", "effective", "difference"]
@@ -186,7 +186,7 @@
 
     "size_price": {
       "replies": [
-        "Eyecojic Under Eye Gel comes in a 15 g pack. The price shown on the [product page](/product/Eyecojic-under-eye-gel) is Rs. 349. Prices can change, so the product page is the source of truth at checkout."
+        "Here are the size and price:\n• **Size:** 15 g pack\n• **Price:** Rs. 349, as shown on the [product page](/product/Eyecojic-under-eye-gel)\n• **Note:** prices can change, so the product page is the source of truth at checkout"
       ],
       "buttons": ["buy", "main_menu"],
       "utterances": ["price", "cost", "costs", "how much", "how much cost", "size", "grams", "gram", "15 g", "rs", "rupees", "inr", "mrp", "quantity", "tube", "pack", "expensive", "cheap"]
@@ -194,7 +194,7 @@
 
     "shipping": {
       "replies": [
-        "Orders placed on the website are usually dispatched within 2 to 3 business days of order confirmation. Standard shipping within India typically takes 5 to 7 business days. Delivery times are estimates and can be delayed by courier issues, holidays or other causes. Shipping charges, if any, are shown at checkout before you confirm. Free shipping is offered above a certain order value that may change from time to time and is shown on the website."
+        "Here is how delivery works:\n• **Dispatch:** orders placed on the website are usually dispatched within 2 to 3 business days of order confirmation\n• **Delivery time:** standard shipping within India typically takes 5 to 7 business days\n• **Delays:** delivery times are estimates and can be delayed by courier issues, holidays or other causes\n• **Charges:** shipping charges, if any, are shown at checkout before you confirm\n• **Free shipping:** offered above a certain order value that may change from time to time and is shown on the website"
       ],
       "buttons": ["returns", "buy", "main_menu"],
       "utterances": ["delivery", "deliver", "delivered", "shipping", "ship", "shipped", "dispatch", "dispatched", "courier", "how long delivery", "delivery time", "how many days", "arrive", "free shipping", "shipping charges", "when will it arrive"]
@@ -202,7 +202,7 @@
 
     "returns": {
       "replies": [
-        "Eligible products can be returned within 7 days of delivery. The product must be unused, unopened and in its original packaging, and you need proof of purchase such as the order confirmation or invoice. For orders placed on the website, email info@eyecojic.com with your order details and the reason for return. After the returned product is received and inspected, the refund goes to the original payment method within 7 to 10 business days. Return shipping is paid by the customer unless the return is due to the company's error or a defective product. Orders bought on Amazon, Flipkart or Myntra must be returned through that marketplace's own return policy."
+        "Here is how returns work:\n• **Window:** eligible products can be returned within 7 days of delivery\n• **Condition:** the product must be unused, unopened and in its original packaging\n• **Proof:** you need proof of purchase, such as the order confirmation or invoice\n• **How:** for orders placed on the website, email info@eyecojic.com with your order details and the reason for return\n• **Refund:** after the returned product is received and inspected, the refund goes to the original payment method within 7 to 10 business days\n• **Return shipping:** paid by the customer, unless the return is due to the company's error or a defective product\n• **Marketplaces:** orders bought on Amazon, Flipkart or Myntra must be returned through that marketplace's own return policy"
       ],
       "buttons": ["shipping", "contact_us", "main_menu"],
       "utterances": ["return", "returns", "return policy", "refund", "refunds", "money back", "exchange", "damaged", "defective", "unopened", "proof of purchase", "replace", "replacement"]
@@ -224,7 +224,7 @@
 
     "contact_us": {
       "replies": [
-        "You may contact us at +91-7840061316 or mail us at info@eyecojic.com for any inquiries, support, or additional information. Our dedicated team is available to assist you with your needs. You can also reach us through our [contact page](/contact)."
+        "Our dedicated team is available to assist you with any inquiries, support, or additional information:\n• **Phone:** +91-7840061316\n• **Email:** info@eyecojic.com\n• **Online:** our [contact page](/contact)"
       ],
       "buttons": [
         { "label": "About Us", "value": "about_us" },
@@ -250,14 +250,14 @@
     "recommendation": {
       "replies": [
         "Thank you. Eyecojic Under Eye Gel is the same for every skin tone. It is a light, cooling gel with 2% Kojic Acid and Vitamin E, formulated to help reduce the appearance of dark circles.",
-        "How to use: dot a pea-sized amount onto your ring finger, gently tap it around the under-eye area from the inner corner to the outer corner, and let it absorb. Use it in the morning and evening on clean skin. Individual results vary."
+        "How to use:\n• Dot a pea-sized amount onto your ring finger\n• Gently tap it around the under-eye area, from the inner corner to the outer corner, and let it absorb\n• Use it in the morning and evening on clean skin\nIndividual results vary."
       ],
       "buttons": ["buy", "product", "contact_us", "main_menu"]
     },
 
     "reaction_handoff": {
       "replies": [
-        "I am sorry to hear that. Please stop using the product, rinse the area gently with water, and see a doctor if it continues. I cannot say what caused it, but our team would like to follow up. You can share your details with them below."
+        "I am sorry to hear that. Please:\n• stop using the product\n• rinse the area gently with water\n• see a doctor if it continues\nI cannot say what caused it, but our team would like to follow up. You can share your details with them below."
       ],
       "buttons": ["main_menu"],
       "handoff": { "category": "reaction", "reason": "Customer reports a skin or eye reaction after use." }
