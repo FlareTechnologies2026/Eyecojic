@@ -122,7 +122,7 @@
 
     "about_us": {
       "replies": [
-        "At EyeCojic we focus on care for dark circles and under-eye concerns. Eyecojic comes from a legacy of eye care that dates back to 1973, and the formula was developed through research with specialists and scientists who work on eye issues. Please click on the link to know more: /about"
+        "At EyeCojic we focus on care for dark circles and under-eye concerns. Eyecojic comes from a legacy of eye care that dates back to 1973, and the formula was developed through research with specialists and scientists who work on eye issues. You can read more on our [About page](/about)."
       ],
       "buttons": ["product", "get_recommendations", "buy", "contact_us", "main_menu"],
       "utterances": ["about us", "about eyecojic", "your company", "mission", "eyecojic company", "know more about you"]
@@ -186,7 +186,7 @@
 
     "size_price": {
       "replies": [
-        "Eyecojic Under Eye Gel comes in a 15 g pack. The price shown on the product page is Rs. 349. Prices can change, so the product page is the source of truth at checkout."
+        "Eyecojic Under Eye Gel comes in a 15 g pack. The price shown on the [product page](/product/Eyecojic-under-eye-gel) is Rs. 349. Prices can change, so the product page is the source of truth at checkout."
       ],
       "buttons": ["buy", "main_menu"],
       "utterances": ["price", "cost", "costs", "how much", "how much cost", "size", "grams", "gram", "15 g", "rs", "rupees", "inr", "mrp", "quantity", "tube", "pack", "expensive", "cheap"]
@@ -216,7 +216,7 @@
 
     "buy": {
       "replies": [
-        "Want to buy Eyecojic Under Eye Gel? You can order it on our website here: /shop. It is also available on Amazon, Flipkart and Myntra."
+        "Want to buy Eyecojic Under Eye Gel? You can order it from the [shop page](/shop) on our website. It is also available on Amazon, Flipkart and Myntra."
       ],
       "buttons": ["get_recommendations", "contact_us", "about_us", { "label": "Main Menu", "value": "main_menu" }],
       "utterances": ["buy", "purchase", "where to buy", "where can i buy", "order online", "how to order", "place order", "place an order", "amazon", "flipkart", "myntra", "shop", "store", "available", "availability", "online"]
@@ -224,7 +224,7 @@
 
     "contact_us": {
       "replies": [
-        "You may contact us at +91-7840061316 or mail us at info@eyecojic.com for any inquiries, support, or additional information. Our dedicated team is available to assist you with your needs. Please click on the link to know more: /contact"
+        "You may contact us at +91-7840061316 or mail us at info@eyecojic.com for any inquiries, support, or additional information. Our dedicated team is available to assist you with your needs. You can also reach us through our [contact page](/contact)."
       ],
       "buttons": [
         { "label": "About Us", "value": "about_us" },
@@ -237,7 +237,7 @@
     },
 
     "contact_details": {
-      "replies": ["You can email info@eyecojic.com or call +91-7840061316. The Contact page on the website also has a form: /contact"],
+      "replies": ["You can email info@eyecojic.com or call +91-7840061316. The [contact page](/contact) on the website also has a form."],
       "buttons": ["contact_us", "main_menu"],
       "utterances": ["phone", "phone number", "number", "mobile", "email", "mail", "email address", "call", "customer care", "customer support", "support", "helpline", "whatsapp", "reach you"]
     },

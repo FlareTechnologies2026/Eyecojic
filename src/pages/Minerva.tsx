@@ -195,7 +195,7 @@ export default function Minerva() {
                   <div className="max-w-[92%]">
                     {msg.content ? (
                       <p className="whitespace-pre-wrap break-words text-[15px] leading-relaxed">
-                        {linkify(msg.content, 'underline decoration-bronze underline-offset-4 hover:text-golddeep')}
+                        {linkify(msg.content)}
                       </p>
                     ) : (
                       typing &&
