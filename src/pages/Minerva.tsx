@@ -245,28 +245,21 @@ export default function Minerva() {
   )
 }
 
-// Small orb + "Minerva is thinking" + pulsing dots. Fades up and collapses when the reply is ready.
+// "Minerva is thinking" followed by the small thinking orb. Collapses on the outer element (max-height + opacity)
+// with nothing clipped, so the orb's pulse never shows a rectangle edge.
 function ThinkingIndicator({ leaving }: { leaving: boolean }) {
   return (
     <div
-      className={`grid transition-[grid-template-rows,opacity,transform] duration-[280ms] ease-out motion-reduce:transition-none ${leaving ? '-translate-y-1 opacity-0' : 'opacity-100'}`}
-      style={{ gridTemplateRows: leaving ? '0fr' : '1fr' }}
+      className={`transition-[max-height,opacity,transform] duration-[280ms] ease-out motion-reduce:transition-none ${leaving ? 'max-h-0 -translate-y-1 opacity-0' : 'max-h-12 opacity-100'}`}
     >
-      <div className="overflow-hidden">
-        <span role="status" aria-label="Minerva is thinking" className="inline-flex items-center gap-2.5 py-1">
-          <span className="block h-6 w-6 shrink-0">
-            <Orb thinking />
-          </span>
-          <span aria-hidden="true" className="text-sm text-umber/75">
-            Minerva is thinking
-          </span>
-          <span aria-hidden="true" className="inline-flex gap-1">
-            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 motion-reduce:animate-none" />
-            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 [animation-delay:150ms] motion-reduce:animate-none" />
-            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 [animation-delay:300ms] motion-reduce:animate-none" />
-          </span>
+      <span role="status" aria-label="Minerva is thinking" className="inline-flex items-center gap-2 py-0.5">
+        <span aria-hidden="true" className="text-[15px] leading-relaxed text-umber">
+          Minerva is thinking
         </span>
-      </div>
+        <span aria-hidden="true" className="block h-[22px] w-[22px] shrink-0 p-px">
+          <Orb thinking className="orb--sm" />
+        </span>
+      </span>
     </div>
   )
 }
