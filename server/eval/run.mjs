@@ -1,25 +1,21 @@
-// Retrieval eval: hit@4 of the expected chunk. Exits non-zero below the threshold.
+// Intent-routing eval: each question must resolve to its expected intent from a fresh state.
+// Exits non-zero below 95% accuracy.
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { Bm25Retriever, loadKb } from '../src/bm25.mjs'
+import { createDialog } from '../src/dialog.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const chunks = loadKb(join(here, '..', 'kb'))
-const retriever = new Bm25Retriever(chunks)
 const questions = JSON.parse(readFileSync(join(here, 'questions.json'), 'utf8'))
-const THRESHOLD = 0.9
-const K = 4
+const dialog = createDialog()
+const THRESHOLD = 0.95
 
-let hit = 0
-let top1 = 0
-for (const { q, expect } of questions) {
-  const ids = retriever.search(q, K).map((r) => r.chunk.id)
-  const ok = ids.includes(expect)
-  if (ok) hit++
-  if (ids[0] === expect) top1++
-  if (!ok) console.log(`MISS  "${q}"\n      expected ${expect}\n      got      ${ids.join(', ') || '(nothing)'}`)
+let ok = 0
+for (const { q, expectIntent } of questions) {
+  const got = dialog.respond({ text: q }).state.intent
+  if (got === expectIntent) ok++
+  else console.log(`MISS  "${q}"\n      expected ${expectIntent}\n      got      ${got}`)
 }
-const rate = hit / questions.length
-console.log(`hit@${K}: ${hit}/${questions.length} (${(rate * 100).toFixed(0)}%)   top1: ${top1}/${questions.length}`)
+const rate = ok / questions.length
+console.log(`intent accuracy: ${ok}/${questions.length} (${(rate * 100).toFixed(1)}%)`)
 process.exit(rate >= THRESHOLD ? 0 : 1)

@@ -2,10 +2,7 @@ import { createServer } from 'node:http'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
-import { Bm25Retriever, loadKb, buildContext } from './bm25.mjs'
-import { HANDOFF_TOOL, buildSystem } from './prompt.mjs'
-import { streamChat } from './anthropic.mjs'
-import { offlineChat } from './offline.mjs'
+import { createDialog } from './dialog.mjs'
 import { emailConfigured, sendEscalation, validateEscalation } from './escalate.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -13,7 +10,6 @@ if (existsSync(join(ROOT, '.env'))) process.loadEnvFile(join(ROOT, '.env'))
 
 const env = process.env
 const PORT = Number(env.PORT || 8787)
-const MODEL = env.CLAUDE_MODEL || 'claude-haiku-5-5'
 const ON_VERCEL = Boolean(env.VERCEL)
 const TRUST_PROXY = env.TRUST_PROXY === '1' || ON_VERCEL
 const ALLOWED = (env.ALLOWED_ORIGINS || 'http://localhost:3000')
@@ -23,8 +19,7 @@ const ALLOWED = (env.ALLOWED_ORIGINS || 'http://localhost:3000')
 // Vercel functions can only write to /tmp.
 const LOG_FILE = ON_VERCEL ? '/tmp/eyecojic/escalations.jsonl' : join(ROOT, 'data', 'escalations.jsonl')
 
-const chunks = loadKb(join(ROOT, 'kb'))
-const retriever = new Bm25Retriever(chunks)
+const dialog = createDialog()
 
 // --- helpers -------------------------------------------------------------
 const hits = new Map() // ip -> number[] timestamps
@@ -105,18 +100,8 @@ async function readJson(req, limit = 32_768) {
   }
 }
 
-function cleanMessages(raw) {
-  if (!Array.isArray(raw)) return null
-  const msgs = raw
-    .slice(-12)
-    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
-    .map((m) => ({ role: m.role, content: m.content.slice(0, 1500) }))
-  while (msgs.length && msgs[0].role !== 'user') msgs.shift()
-  if (!msgs.length || msgs[msgs.length - 1].role !== 'user') return null
-  return msgs
-}
-
 // --- routes --------------------------------------------------------------
+// One turn: { text?, button?, state? } in, { messages, buttons, handoff?, state } out. No model, no streaming.
 async function chat(req, res) {
   const ip = clientIp(req)
   if (rateLimited(ip, 'chat', 20, 60_000)) return json(res, 429, { error: 'Too many messages. Please wait a minute.' })
@@ -127,62 +112,11 @@ async function chat(req, res) {
   } catch (e) {
     return json(res, e.status || 400, { error: 'Invalid request.' })
   }
-  const messages = cleanMessages(body.messages)
-  if (!messages) return json(res, 400, { error: 'Invalid messages.' })
-
-  // Retrieve on the last two user turns so short follow-ups ("and the price?") keep context.
-  const query = messages.filter((m) => m.role === 'user').slice(-2).map((m) => m.content).join(' ')
-  const ctx = buildContext(retriever, chunks, query)
-
-  res.writeHead(200, {
-    'content-type': 'text/event-stream; charset=utf-8',
-    'cache-control': 'no-cache, no-transform',
-    connection: 'keep-alive',
-    'x-accel-buffering': 'no',
-  })
-  const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`)
-  const ac = new AbortController()
-  res.on('close', () => ac.abort())
-
-  const emit = (ev) => {
-    if (ev.type === 'text') send({ type: 'text', text: ev.text })
-    else if (ev.type === 'tool' && ev.name === HANDOFF_TOOL.name)
-      send({ type: 'handoff', reason: String(ev.input.reason ?? ''), category: String(ev.input.category ?? 'other') })
-  }
-
-  try {
-    let started = false
-    let failed = !env.ANTHROPIC_API_KEY // no key: go straight to offline mode
-    if (!failed) {
-      try {
-        for await (const ev of streamChat({
-          apiKey: env.ANTHROPIC_API_KEY,
-          model: MODEL,
-          system: buildSystem(ctx.chunks),
-          messages,
-          tools: [HANDOFF_TOOL],
-          signal: ac.signal,
-        })) {
-          started = true
-          emit(ev)
-        }
-      } catch (e) {
-        if (ac.signal.aborted) return res.end()
-        console.error('claude error:', e.message)
-        // Fall back to the offline engine only if nothing was sent yet, so the reply never doubles up.
-        if (started) throw e
-        failed = true
-      }
-    }
-    if (failed) for await (const ev of offlineChat({ messages, retriever })) emit(ev)
-    send({ type: 'done' })
-  } catch (e) {
-    if (!ac.signal.aborted) {
-      console.error('chat error:', e.message)
-      send({ type: 'error', message: 'Sorry, something went wrong. Please try again.' })
-    }
-  }
-  res.end()
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return json(res, 400, { error: 'Invalid request.' })
+  const text = typeof body.text === 'string' ? body.text : ''
+  const button = typeof body.button === 'string' ? body.button : ''
+  if (!text.trim() && !button) return json(res, 400, { error: 'Send text or a button.' })
+  return json(res, 200, dialog.respond({ text, button, state: body.state }))
 }
 
 async function escalate(req, res) {
@@ -222,9 +156,8 @@ export async function handler(req, res) {
     if (req.method === 'GET' && path === '/api/health')
       return json(res, 200, {
         ok: true,
-        chunks: chunks.length,
-        mode: env.ANTHROPIC_API_KEY ? 'live' : 'offline',
-        anthropicConfigured: Boolean(env.ANTHROPIC_API_KEY),
+        intents: dialog.intentCount,
+        mode: 'intent',
         emailConfigured: emailConfigured(env),
       })
     if (req.method === 'POST' && path === '/api/chat') return await chat(req, res)
@@ -240,6 +173,6 @@ export async function handler(req, res) {
 // Start listening only when run directly (npm start), not when imported by a Vercel function.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   createServer(handler).listen(PORT, () =>
-    console.log(`chat server on :${PORT} (${chunks.length} kb chunks, model ${MODEL})`),
+    console.log(`chat server on :${PORT} (${dialog.intentCount} intents, intent mode)`),
   )
 }

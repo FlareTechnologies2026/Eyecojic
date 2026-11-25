@@ -1,61 +1,39 @@
-// Client for the Eyecojic chat server. No keys live here: the server holds them.
+// Client for the Eyecojic chat server (Minerva). No keys live here, and none are needed.
 // Set VITE_CHAT_API_URL at build time for production; in dev the Vite proxy handles /api.
 const BASE = (import.meta.env.VITE_CHAT_API_URL ?? '').replace(/\/$/, '')
 
 export type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
-export type ChatEvent =
-  | { type: 'text'; text: string }
-  | { type: 'handoff'; reason: string; category: string }
-  | { type: 'done' }
-  | { type: 'error'; message: string }
+export type QuickReply = { label: string; value: string }
 
-export async function* streamChat(
-  messages: ChatMessage[],
+/** Opaque dialog state from the server; sent back unchanged with the next turn. */
+export type BotState = { intent?: string; slot?: string; slots?: Record<string, string> }
+
+export type TurnResult = {
+  messages: { text: string }[]
+  buttons: QuickReply[]
+  handoff?: { reason: string; category: string }
+  state: BotState
+}
+
+export type TurnInput = { text?: string; button?: string; state: BotState }
+
+/** One chat turn: plain JSON POST. Returns an error message instead of throwing on HTTP errors. */
+export async function sendTurn(
+  input: TurnInput,
   signal?: AbortSignal,
-): AsyncGenerator<ChatEvent> {
+): Promise<TurnResult | { error: string }> {
   const res = await fetch(`${BASE}/api/chat`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify(input),
     signal,
   })
-  if (!res.ok || !res.body) {
-    let message = 'Sorry, the assistant is unavailable right now.'
-    try {
-      const j = (await res.json()) as { error?: string }
-      if (j.error) message = j.error
-    } catch {
-      /* keep default */
-    }
-    yield { type: 'error', message }
-    return
+  const j = (await res.json().catch(() => null)) as (TurnResult & { error?: string }) | null
+  if (!res.ok || !j || !Array.isArray(j.messages)) {
+    return { error: j?.error || 'Sorry, the assistant is unavailable right now.' }
   }
-
-  const reader = res.body.getReader()
-  const decoder = new TextDecoder()
-  let buf = ''
-  for (;;) {
-    const { done, value } = await reader.read()
-    if (done) break
-    buf += decoder.decode(value, { stream: true })
-    let idx: number
-    while ((idx = buf.indexOf('\n\n')) !== -1) {
-      const frame = buf.slice(0, idx)
-      buf = buf.slice(idx + 2)
-      const data = frame
-        .split('\n')
-        .filter((l) => l.startsWith('data:'))
-        .map((l) => l.slice(5).trim())
-        .join('')
-      if (!data) continue
-      try {
-        yield JSON.parse(data) as ChatEvent
-      } catch {
-        /* ignore malformed frame */
-      }
-    }
-  }
+  return j
 }
 
 export type EscalationInput = {
