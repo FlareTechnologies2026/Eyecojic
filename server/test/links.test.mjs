@@ -51,3 +51,21 @@ test('every link has a readable label and an allowed, real target', () => {
   }
   assert.ok(count > 0)
 })
+
+test('bullet replies: lead-in line, at least two "• " bullets, no empty bullets, no "- " lines', () => {
+  let bulleted = 0
+  for (const { id, text } of replies) {
+    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean)
+    for (const l of lines) {
+      assert.ok(!l.startsWith('- '), `${id}: line starts with "- "`)
+      assert.ok(l !== '\u2022', `${id}: empty bullet`)
+      if (l.startsWith('\u2022')) assert.ok(/^\u2022 \S/.test(l), `${id}: bullet needs "• " then text`)
+    }
+    const bullets = lines.filter((l) => l.startsWith('\u2022 '))
+    if (!bullets.length) continue
+    bulleted++
+    assert.ok(!lines[0].startsWith('\u2022'), `${id}: bullets need a lead-in line`)
+    assert.ok(bullets.length >= 2, `${id}: a list needs at least two bullets`)
+  }
+  assert.ok(bulleted >= 10)
+})
