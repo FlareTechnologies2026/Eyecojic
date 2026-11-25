@@ -89,3 +89,25 @@
 .animate-marquee {
   animation: marquee-x 36s linear infinite;
 }
+
+/* Minerva: word-by-word fade-in of a reply (delay set inline per word; 150ms = WORD_FADE_MS in src/lib/reveal.ts). */
+@keyframes minerva-word-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.minerva-word {
+  animation: minerva-word-in 150ms ease-out both;
+}
+
+/* Minerva: quick replies and "Contact our team" fade in after the reveal (250ms = BUTTONS_FADE_MS). */
+.minerva-fade-in {
+  animation: minerva-word-in 250ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .minerva-word,
+  .minerva-fade-in {
+    animation: none;
+  }
+}

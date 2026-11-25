@@ -9,6 +9,15 @@ export type MinervaMessage = {
   handoff?: boolean
   /** Quick replies offered with this message. Only the latest bot message's buttons are active. */
   buttons?: QuickReply[]
+  /** Placeholder for a reply still on its way: the thinking indicator, then its fade-out. */
+  pending?: 'thinking' | 'leaving'
+  /** false while the words are fading in; true (or undefined) once the text is fully shown. */
+  revealed?: boolean
+  /** Epoch ms when this message's first word starts fading in, and the delay between words. */
+  revealAt?: number
+  wordGap?: number
+  /** Epoch ms when the reveal finished (used to fade in the buttons only right after it). */
+  revealedAt?: number
 }
 
 export type MinervaHandoff = { category: string; reason: string }

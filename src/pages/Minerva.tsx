@@ -5,6 +5,7 @@ import Orb from '../components/minerva/Orb'
 import { useMinerva } from '../hooks/useMinerva'
 import { sendEscalation } from '../lib/chatApi'
 import { renderReply } from '../lib/linkify'
+import type { MinervaMessage } from '../context/minervaContext'
 
 // Hero chips send intent ids (server/data/intents.json), not free text.
 const CHIPS = [
@@ -31,6 +32,7 @@ export default function Minerva() {
   const dockInput = useRef<HTMLTextAreaElement>(null)
   const [orb, setOrb] = useState<{ x: number; y: number; size: number } | null>(null)
   const [orbReady, setOrbReady] = useState(false)
+  const [mountedAt] = useState(() => Date.now())
 
   useEffect(() => {
     const prev = document.title
@@ -101,8 +103,8 @@ export default function Minerva() {
     setDraft('')
   }
 
-  const lastBot = m.messages[m.messages.length - 1]
-  const typing = m.busy && lastBot?.role === 'assistant' && !lastBot.content
+  // Buttons fade in only for replies revealed while this page is open; history renders instantly.
+  const fadeIfNew = (msg: MinervaMessage) => ((msg.revealedAt ?? 0) > mountedAt ? 'minerva-fade-in' : '')
 
   return (
     <div
@@ -180,6 +182,7 @@ export default function Minerva() {
           ref={listRef}
           role="log"
           aria-live="polite"
+          aria-busy={m.busy}
           aria-label="Conversation with Minerva"
           data-lenis-prevent
           className={`absolute inset-0 overflow-y-auto overscroll-contain px-4 pb-4 pt-[136px] transition-opacity duration-500 [mask-image:linear-gradient(to_bottom,transparent_0,black_6rem)] sm:pt-[88px] sm:[mask-image:linear-gradient(to_bottom,transparent_0,black_4.5rem)] md:px-8 ${m.started ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
@@ -193,25 +196,20 @@ export default function Minerva() {
                   </p>
                 ) : (
                   <div className="max-w-[92%]">
-                    {msg.content ? (
-                      renderReply(msg.content)
+                    {msg.pending ? (
+                      <ThinkingIndicator leaving={msg.pending === 'leaving'} />
+                    ) : msg.revealed === false ? (
+                      <RevealingReply text={msg.content} revealAt={msg.revealAt ?? 0} gap={msg.wordGap ?? 0} />
                     ) : (
-                      typing &&
-                      i === m.messages.length - 1 && (
-                        <span className="inline-flex gap-1 py-2" aria-label="Minerva is typing">
-                          <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50" />
-                          <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50 [animation-delay:150ms]" />
-                          <i className="h-2 w-2 animate-pulse rounded-full bg-umber/50 [animation-delay:300ms]" />
-                        </span>
-                      )
+                      renderReply(msg.content)
                     )}
-                    {msg.handoff && (
-                      <button onClick={m.openForm} className="mt-3 rounded-full bg-umber px-5 py-2 text-sm text-ivory transition-colors hover:bg-umber/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2">
+                    {msg.handoff && msg.revealed !== false && (
+                      <button onClick={m.openForm} className={`${fadeIfNew(msg)} mt-3 rounded-full bg-umber px-5 py-2 text-sm text-ivory transition-colors hover:bg-umber/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2`}>
                         Contact our team
                       </button>
                     )}
                     {i === m.messages.length - 1 && m.buttons.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Quick replies">
+                      <div className={`${fadeIfNew(msg)} mt-3 flex flex-wrap gap-2`} role="group" aria-label="Quick replies">
                         {m.buttons.map((b) => (
                           <button key={b.value + b.label} onClick={() => m.sendButton(b.value, b.label)} className={pill}>
                             {b.label}
@@ -245,6 +243,40 @@ export default function Minerva() {
       {m.formOpen && <HandoffDialog />}
     </div>
   )
+}
+
+// Small orb + "Minerva is thinking" + pulsing dots. Fades up and collapses when the reply is ready.
+function ThinkingIndicator({ leaving }: { leaving: boolean }) {
+  return (
+    <div
+      className={`grid transition-[grid-template-rows,opacity,transform] duration-[280ms] ease-out motion-reduce:transition-none ${leaving ? '-translate-y-1 opacity-0' : 'opacity-100'}`}
+      style={{ gridTemplateRows: leaving ? '0fr' : '1fr' }}
+    >
+      <div className="overflow-hidden">
+        <span role="status" aria-label="Minerva is thinking" className="inline-flex items-center gap-2.5 py-1">
+          <span className="block h-6 w-6 shrink-0">
+            <Orb thinking />
+          </span>
+          <span aria-hidden="true" className="text-sm text-umber/75">
+            Minerva is thinking
+          </span>
+          <span aria-hidden="true" className="inline-flex gap-1">
+            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 motion-reduce:animate-none" />
+            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 [animation-delay:150ms] motion-reduce:animate-none" />
+            <i className="h-1.5 w-1.5 animate-pulse rounded-full bg-umber/50 [animation-delay:300ms] motion-reduce:animate-none" />
+          </span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// Word-by-word fade-in. Delays are relative to when this mounted, so returning to the page mid-reveal
+// resumes where it was (negative delays) instead of restarting. Hidden from screen readers: the log is
+// aria-busy until the reveal ends, then the plain reply replaces this and is announced once.
+function RevealingReply({ text, revealAt, gap }: { text: string; revealAt: number; gap: number }) {
+  const [startMs] = useState(() => revealAt - Date.now())
+  return <div aria-hidden="true">{renderReply(text, { startMs, gapMs: gap })}</div>
 }
 
 function Composer({
