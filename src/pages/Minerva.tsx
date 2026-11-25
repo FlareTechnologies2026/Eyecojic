@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { FormEvent, KeyboardEvent, RefObject } from 'react'
+import type { KeyboardEvent, RefObject } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Orb from '../components/minerva/Orb'
 import { useMinerva } from '../hooks/useMinerva'
-import { sendEscalation } from '../lib/chatApi'
+import { contactState } from '../lib/contactHandoff'
 import { renderReply } from '../lib/linkify'
 import type { MinervaMessage } from '../context/minervaContext'
 
@@ -76,9 +76,8 @@ export default function Minerva() {
 
   // Focus the input on load and when the layout switches.
   useEffect(() => {
-    if (m.formOpen) return
     ;(m.started ? dockInput : heroInput).current?.focus()
-  }, [m.started, m.formOpen])
+  }, [m.started])
 
   // Scrolling. Only runs when the shape of the list changes (a message added or replaced, the indicator
   // leaving), not when a finished reveal flips its flag, so it never fights a scroll in progress.
@@ -115,16 +114,14 @@ export default function Minerva() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- scrollKey captures the changes that matter
   }, [scrollKey])
 
-  // Escape closes the form, otherwise goes Home (only when nothing is half-typed).
+  // Escape goes Home (only when nothing is half-typed).
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key !== 'Escape') return
-      if (m.formOpen) m.closeForm()
-      else if (!draft.trim()) navigate('/')
+      if (e.key === 'Escape' && !draft.trim()) navigate('/')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [m, draft, navigate])
+  }, [draft, navigate])
 
   const submit = (text = draft) => {
     if (!text.trim() || m.busy) return
@@ -158,9 +155,9 @@ export default function Minerva() {
             </button>
           )}
         </div>
-        <button onClick={m.openForm} className={pill}>
+        <Link to="/contact" state={contactState(m.handoff)} className={pill}>
           Contact team
-        </button>
+        </Link>
       </header>
 
       {/* the one orb, moved between the hero slot and the header */}
@@ -235,9 +232,12 @@ export default function Minerva() {
                       renderReply(msg.content)
                     )}
                     {msg.handoff && msg.revealed !== false && (
-                      <button onClick={m.openForm} className={`${fadeIfNew(msg)} mt-3 rounded-full bg-umber px-5 py-2 text-sm text-ivory transition-colors hover:bg-umber/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2`}>
+                      <Link
+                        to="/contact"
+                        state={contactState(msg.handoff)}
+                        className={`${fadeIfNew(msg)} mt-3 inline-block rounded-full bg-umber px-5 py-2 text-sm text-ivory transition-colors hover:bg-umber/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-bronze focus-visible:ring-offset-2`}>
                         Contact our team
-                      </button>
+                      </Link>
                     )}
                     {i === m.messages.length - 1 && m.buttons.length > 0 && (
                       <div className={`${fadeIfNew(msg)} mt-3 flex flex-wrap gap-2`} role="group" aria-label="Quick replies">
@@ -271,7 +271,6 @@ export default function Minerva() {
 
       <p className="relative z-20 px-4 pb-3 pt-1 text-center text-[11px] leading-snug text-umber/75">{DISCLAIMER}</p>
 
-      {m.formOpen && <HandoffDialog />}
     </div>
   )
 }
@@ -363,111 +362,3 @@ function Composer({
   )
 }
 
-function HandoffDialog() {
-  const { messages, handoff, closeForm } = useMinerva()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState(handoff?.reason ?? '')
-  const [consent, setConsent] = useState(false)
-  const [website, setWebsite] = useState('') // honeypot
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [serverError, setServerError] = useState('')
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
-  const nameRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    nameRef.current?.focus()
-  }, [])
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
-    setSending(true)
-    setErrors({})
-    setServerError('')
-    const r = await sendEscalation({
-      name,
-      email,
-      message,
-      category: handoff?.category ?? 'other',
-      consent,
-      website,
-      transcript: messages.map(({ role, content }) => ({ role, content })),
-    })
-    setSending(false)
-    if (r.ok) setSent(true)
-    else {
-      setErrors(r.errors ?? {})
-      if (r.error) setServerError(r.error)
-    }
-  }
-
-  const field =
-    'mt-1 w-full rounded-xl border border-umber/20 bg-white px-3.5 py-2.5 text-base text-umber outline-none focus:border-bronze'
-  const err = 'mt-1 block text-xs text-[#B42318]'
-
-  return (
-    <div className="absolute inset-0 z-30 flex items-end justify-center bg-umber/35 p-0 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={(e) => e.target === e.currentTarget && closeForm()}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="minerva-form-title"
-        data-lenis-prevent
-        className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ivory p-6 shadow-2xl sm:rounded-3xl"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <h2 id="minerva-form-title" className="font-serif text-3xl font-light">
-            Contact our team
-          </h2>
-          <button onClick={closeForm} aria-label="Close form" className="font-serif text-3xl leading-none text-umber/80 hover:text-umber">
-            ×
-          </button>
-        </div>
-
-        {sent ? (
-          <div className="py-8 text-center">
-            <p className="font-serif text-2xl italic">Thank you.</p>
-            <p className="mt-2 text-sm text-umber/85">Your note is with our team. We will reply to {email}.</p>
-            <button onClick={closeForm} className="mt-6 rounded-full bg-umber px-6 py-2.5 text-sm text-ivory">
-              Back to chat
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={submit} noValidate className="mt-4 space-y-4">
-            <label className="block text-sm">
-              Name
-              <input ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className={field} />
-              {errors.name && <span className={err}>{errors.name}</span>}
-            </label>
-            <label className="block text-sm">
-              Email
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={field} />
-              {errors.email && <span className={err}>{errors.email}</span>}
-            </label>
-            <label className="block text-sm">
-              Your question
-              <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} maxLength={2000} className={field} />
-              {errors.message && <span className={err}>{errors.message}</span>}
-            </label>
-            {/* honeypot: hidden from people and assistive tech, bots fill it */}
-            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-              <label>
-                Website
-                <input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
-              </label>
-            </div>
-            <label className="flex items-start gap-3 text-sm leading-snug">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#D94F68]" />
-              <span>I agree that the Eyecojic team may contact me by email about this request.</span>
-            </label>
-            {errors.consent && <span className={err}>{errors.consent}</span>}
-            {serverError && <p className="text-sm text-[#B42318]">{serverError}</p>}
-            <button type="submit" disabled={sending} className="w-full rounded-full bg-umber py-3 text-sm font-medium text-ivory transition-colors hover:bg-umber/85 disabled:opacity-50">
-              {sending ? 'Sending…' : 'Send to our team'}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
-  )
-}

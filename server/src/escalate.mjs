@@ -56,7 +56,7 @@ export async function sendEscalation(value, { env = process.env, transport, logF
     ? '\n\n--- Recent chat ---\n' + value.transcript.map((m) => `${m.role}: ${m.content}`).join('\n')
     : ''
   const text =
-    `New Eyecojic chat handoff\n\nName: ${value.name}\nEmail: ${value.email}\n` +
+    `New Eyecojic ${value.category === 'contact_form' ? 'contact form message' : 'chat handoff'}\n\nName: ${value.name}\nEmail: ${value.email}\n` +
     `Phone: ${value.phone || 'not given'}\nTopic: ${value.category || 'not set'}\n\n` +
     `Message:\n${value.message}${convo}\n`
 
@@ -64,7 +64,7 @@ export async function sendEscalation(value, { env = process.env, transport, logF
     from: env.SMTP_FROM,
     to: env.ESCALATION_TO,
     replyTo: { name: value.name.replace(/["<>]/g, ''), address: value.email },
-    subject: `[Eyecojic chat] ${value.category || 'Handoff'} from ${value.name}`.slice(0, 200),
+    subject: `[Eyecojic] ${value.category || 'Handoff'} from ${value.name}`.slice(0, 200),
     text,
   })
   return { emailed: true }
